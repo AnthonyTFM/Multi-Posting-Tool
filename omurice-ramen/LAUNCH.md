@@ -10,7 +10,7 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 | # | Item | Why | Format | Blocks launch? |
 |---|---|---|---|---|
 | 1 | ✅ **Menu loaded** from the printed menu (58 items, combos, extras, toppings). Still confirm: sugar/ice levels for boba (not on the printed menu, so not offered online), Ramune flavors, payment types and parking in the FAQ | The AI only answers from what's approved | Reply in chat or edit in `/admin` | Before launch |
-| 2 | **Your Instagram photos & reels**: upload them yourself in `/admin/media` (drag & drop), or attach them in chat | Hero video, gallery and menu photos. Illustrations fill in until then | Originals from your phone/IG (Reels download as MP4). 1 hero clip 8–20 s + 6–12 gallery shots + 1 photo per top-10 dish | No (neon design works meanwhile) |
+| 2 | **Your Instagram photos & reels**: upload them yourself in `/admin/media` (drag & drop), or attach them in chat | Hero video, gallery and menu photos. Illustrations fill in until then | Originals from your phone/IG (Reels download as MP4). 1 hero clip 8–20 s + 6–12 gallery shots + 1 photo per top-10 dish | No (dining-room video and illustrations work meanwhile) |
 | 2a | **Original dish photos** used on the printed menu (ask your menu designer) | Cropping them from a photo of the printed menu would look blurry | JPG/PNG originals | No |
 | 2b | **Logo file** (original PNG/SVG/AI) | The current logo is cropped from your Instagram profile picture (fine small, soft when large) | Whatever your designer delivered | No |
 | 2c | **TikTok handle** (Facebook is already linked) | Add to header/footer | Paste in `/admin/media` → Social links | No |
@@ -112,7 +112,7 @@ AI phone orders are tagged **AI phone**; web orders **Web**. Every order is **pa
 > CTA button: **Order online** → https://omuriceramen.com/menu
 
 **Instagram caption**
-> New website just dropped 🍳🍜🧋 Order ahead, pick your spice level, sweetness and toppings, and we'll text you when it's ready. Calling? Our AI host answers 24/7 (say "team member" anytime to reach us). Link in bio. #BattleCreekEats #omurice #ramen #boba
+> New website just dropped 🍳🍜🧋 Order ahead, pick your sauce, toppings and extras, and we'll text you when it's ready. Calling? Our AI host answers 24/7 (say "team member" anytime to reach us). Link in bio. #BattleCreekEats #omurice #ramen #boba
 
 **Counter sign / bag insert**
 > **Order direct. Pay less.** Scan to order pickup → [QR to /menu]
