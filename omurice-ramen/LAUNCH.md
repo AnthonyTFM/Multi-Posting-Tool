@@ -17,7 +17,7 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 | 3 | **2nd store line number** for "speak to a human" transfers | Transfer destination | 10-digit number. Must NOT be forwarded | **Yes** (for phone) |
 | 4 | **Twilio account** (you own it; add card) | Phone number, AI voice, texts | Account SID + Auth Token | **Yes** (for phone/texts) |
 | 5 | **Anthropic API key** (console.anthropic.com) | Powers chat + phone AI | `sk-ant-…` key | **Yes** (for AI) |
-| 5b | **Google Cloud API key** for live reviews (Places API (New), billing on) | Powers the rotating Google reviews on the home page | Key, or invite me to the project | No (links to Google until then) |
+| 5b | **5–10 favorite Google reviews**: paste them in `/admin/reviews` (word-for-word), or send me screenshots | Rotating reviews on the home page | Copy from Google Maps on your phone | No (rating card shows until then) |
 | 6 | **Hosting account** (Railway or Render) | Runs the site 24/7 | Invite me or share deploy access | **Yes** |
 | 7 | Domain/DNS login for omuriceramen.com | Point domain at the new site | Registrar login or DNS access | Yes (for cutover) |
 | 8 | **Deliverect** account (phase 2) | Push web/phone orders into Honor POS | Ask Honor POS support to enable the Deliverect integration | No (phase 2) |
@@ -131,7 +131,7 @@ AI phone orders are tagged **AI phone**; web orders **Web**. Every order is **pa
 | Bot disclosure | Greeting says "I'm the restaurant's virtual assistant" | Keep that line |
 | Prank / unpaid orders | Max $250 unpaid, 3 open orders per phone/IP per 30 min, rate limits | Call back suspicious big orders |
 | Texts without consent (TCPA/10DLC) | Opt-in language at checkout + reservations; texts are transactional only | Don't send marketing texts from this number |
-| Google reviews display | Author names/photos link to Google, "Google Maps" attribution, true average + count always shown, text never edited, ratings not marked up as our own structured data | Don't copy reviews into the page by hand |
+| Reviews display (FTC rule) | Only real reviews, copied word-for-word with the reviewer's name; true average + count always shown with a link to all reviews; ratings not marked up as our own structured data | Never edit wording, write reviews yourself, or post ones from staff/family |
 | "Pay less" claim | Copy says delivery apps list higher prices (true today: $16.99 direct vs $20.39 on DoorDash for Classic Tonkotsu) | Re-check if DoorDash prices change |
 | Call transcripts stored | Kept in your database only; no audio recorded | Add a privacy-policy line if you want |
 | AI outage | Any AI error transfers the caller to staff; kill switch in settings | None |

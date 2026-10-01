@@ -48,5 +48,20 @@ export async function PATCH(req: Request) {
     };
     patch.socials = { instagram: clean(s?.instagram), facebook: clean(s?.facebook), tiktok: clean(s?.tiktok) };
   }
+  if (b.reviewRating !== undefined) {
+    const r = Math.round(Number(b.reviewRating) * 10) / 10;
+    if (!(r >= 1 && r <= 5)) return Response.json({ error: "Rating must be between 1.0 and 5.0" }, { status: 400 });
+    patch.reviewRating = r;
+  }
+  if (b.reviewCount !== undefined) {
+    const c = Math.round(Number(b.reviewCount));
+    if (!(c >= 0 && c < 1_000_000)) return Response.json({ error: "Invalid review count" }, { status: 400 });
+    patch.reviewCount = c;
+  }
+  if (b.googlePlaceId !== undefined) {
+    const id = String(b.googlePlaceId ?? "").trim();
+    if (id && !/^[A-Za-z0-9_-]{10,300}$/.test(id)) return Response.json({ error: "That doesn't look like a Google place ID (starts with ChIJ…)" }, { status: 400 });
+    patch.googlePlaceId = id;
+  }
   return Response.json(updateSettings(patch));
 }

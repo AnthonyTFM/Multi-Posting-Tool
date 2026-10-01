@@ -1,6 +1,8 @@
-// Live Google reviews via the Places API (New), fetched server-side so the API
-// key never reaches the browser. Google returns up to 5 "most relevant" reviews
-// plus the overall rating and count.
+// Reviews for the home page carousel, from two sources:
+//  1. Reviews staff paste in at /admin/reviews, copied word-for-word from the
+//     public Google listing. No Google account or API needed.
+//  2. Optional: live Google reviews via the Places API (New), fetched
+//     server-side so the key never reaches the browser (up to 5 "most relevant").
 //
 // Setup: GOOGLE_MAPS_API_KEY (restricted to "Places API (New)"). GOOGLE_PLACE_ID
 // is optional; it's looked up once by name + address and remembered (Google
@@ -10,17 +12,22 @@
 // link each review to Google, show the "Google Maps" attribution, never edit
 // review text, and always show the true overall rating and count.
 
+import { db, nowIso } from "./db.ts";
 import { RESTAURANT } from "./restaurant.ts";
 import { getSettings, updateSettings } from "./settings.ts";
 
-export type GoogleReview = {
+export const REVIEW_SOURCES = ["Google", "Yelp", "Facebook", "Other"] as const;
+export type ReviewSource = (typeof REVIEW_SOURCES)[number];
+
+export type Review = {
   id: string;
+  source: ReviewSource;
   author: string;
   authorUrl: string | null;
   authorPhoto: string | null;
   rating: number;
   text: string;
-  relativeTime: string; // "2 weeks ago", localized by Google
+  relativeTime: string; // "2 weeks ago" (Google) or what staff typed
   publishTime: string | null;
   reviewUrl: string | null;
 };
@@ -28,7 +35,7 @@ export type GoogleReview = {
 export type ReviewsData = {
   rating: number;
   count: number;
-  reviews: GoogleReview[];
+  reviews: Review[];
   placeUrl: string;
   writeReviewUrl: string;
   fetchedAt: number;
@@ -64,8 +71,9 @@ type ApiPlace = {
 /** Turn a Places API response into what the site shows. Pure; exported for tests. */
 export function normalizePlace(place: ApiPlace, placeId: string, minRating = MIN_RATING()): ReviewsData {
   const reviews = (place.reviews ?? [])
-    .map((r, i): GoogleReview => ({
+    .map((r, i): Review => ({
       id: r.name ?? `review-${i}`,
+      source: "Google",
       author: r.authorAttribution?.displayName?.trim() || "Google user",
       authorUrl: r.authorAttribution?.uri ?? null,
       authorPhoto: r.authorAttribution?.photoUri ?? null,
@@ -81,7 +89,7 @@ export function normalizePlace(place: ApiPlace, placeId: string, minRating = MIN
     count: place.userRatingCount ?? RESTAURANT.rating.count,
     reviews,
     placeUrl: place.googleMapsUri ?? `https://www.google.com/maps/place/?q=place_id:${placeId}`,
-    writeReviewUrl: `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`,
+    writeReviewUrl: writeReviewUrlFor(placeId),
     fetchedAt: Date.now(),
   };
 }
@@ -153,10 +161,109 @@ export async function getGoogleReviews(): Promise<ReviewsData | null> {
   return state.data;
 }
 
-/** Overall rating for the header/footer: live from Google when available. */
+/** Overall rating for the header/footer: live from Google, else what staff entered. */
 export async function ratingSummary(): Promise<{ stars: number; count: number }> {
-  const d = await getGoogleReviews();
-  return d ? { stars: d.rating, count: d.count } : { stars: RESTAURANT.rating.stars, count: RESTAURANT.rating.count };
+  const d = await homepageReviews();
+  return { stars: d.rating, count: d.count };
+}
+
+// ---------- Staff-entered reviews ----------
+
+export type ManualReview = {
+  id: number;
+  author: string;
+  rating: number;
+  text: string;
+  source: ReviewSource;
+  url: string;
+  when: string;
+  active: boolean;
+  sort: number;
+};
+
+type ManualRow = { id: number; author: string; rating: number; text: string; source: string; url: string; when_label: string; active: number; sort: number };
+
+export class ReviewInputError extends Error {}
+
+export function listManualReviews(opts: { includeHidden?: boolean } = {}): ManualReview[] {
+  const rows = db().prepare("SELECT * FROM reviews ORDER BY sort, id").all() as ManualRow[];
+  return rows
+    .filter((r) => opts.includeHidden || r.active)
+    .map((r) => ({ id: r.id, author: r.author, rating: r.rating, text: r.text, source: r.source as ReviewSource, url: r.url, when: r.when_label, active: !!r.active, sort: r.sort }));
+}
+
+export function saveManualReview(input: { id?: number; author: string; rating: number; text: string; source: string; url?: string; when?: string; active?: boolean }): void {
+  const author = String(input.author ?? "").trim().slice(0, 60);
+  const text = String(input.text ?? "").trim().slice(0, 2000);
+  const rating = Math.round(Number(input.rating));
+  const source = REVIEW_SOURCES.includes(input.source as ReviewSource) ? input.source : "Google";
+  const url = String(input.url ?? "").trim();
+  const when = String(input.when ?? "").trim().slice(0, 40);
+  if (!author) throw new ReviewInputError("Add the reviewer's name as it appears on Google.");
+  if (!text) throw new ReviewInputError("Paste the review text.");
+  if (!(rating >= 1 && rating <= 5)) throw new ReviewInputError("Stars must be 1 to 5.");
+  if (url && !/^https:\/\/[^\s"<>]+$/.test(url)) throw new ReviewInputError("The link must start with https://");
+  if (input.id) {
+    db()
+      .prepare("UPDATE reviews SET author = ?, rating = ?, text = ?, source = ?, url = ?, when_label = ?, active = ? WHERE id = ?")
+      .run(author, rating, text, source, url, when, input.active === false ? 0 : 1, input.id);
+  } else {
+    const max = db().prepare("SELECT COALESCE(MAX(sort), -1) AS m FROM reviews").get() as { m: number };
+    db()
+      .prepare("INSERT INTO reviews (author, rating, text, source, url, when_label, active, sort, created_at) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)")
+      .run(author, rating, text, source, url, when, max.m + 1, nowIso());
+  }
+}
+
+export function deleteManualReview(id: number): void {
+  db().prepare("DELETE FROM reviews WHERE id = ?").run(id);
+}
+
+function manualToReview(m: ManualReview): Review {
+  return {
+    id: `manual-${m.id}`,
+    source: m.source,
+    author: m.author,
+    authorUrl: null,
+    authorPhoto: null,
+    rating: m.rating,
+    text: m.text,
+    relativeTime: m.when,
+    publishTime: null,
+    reviewUrl: m.url || null,
+  };
+}
+
+const sameReview = (a: Review, b: Review) => a.author.toLowerCase() === b.author.toLowerCase() && a.text.slice(0, 60) === b.text.slice(0, 60);
+
+export type HomeReviews = {
+  rating: number;
+  count: number;
+  live: boolean; // true when the numbers/reviews come straight from Google's API
+  reviews: Review[];
+  placeUrl: string;
+  writeReviewUrl: string | null;
+};
+
+export function writeReviewUrlFor(placeId: string): string {
+  return `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`;
+}
+
+/** Everything the home page needs: live Google data when configured, plus staff-entered reviews. */
+export async function homepageReviews(): Promise<HomeReviews> {
+  const live = await getGoogleReviews();
+  const s = getSettings();
+  const manual = listManualReviews().map(manualToReview);
+  const liveReviews = live?.reviews ?? [];
+  const placeId = process.env.GOOGLE_PLACE_ID || s.googlePlaceId;
+  return {
+    rating: live?.rating ?? s.reviewRating,
+    count: live?.count ?? s.reviewCount,
+    live: !!live,
+    reviews: [...liveReviews, ...manual.filter((m) => !liveReviews.some((r) => sameReview(r, m)))],
+    placeUrl: live?.placeUrl ?? (placeId ? `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(placeId)}` : RESTAURANT.mapsUrl),
+    writeReviewUrl: live?.writeReviewUrl ?? (placeId ? writeReviewUrlFor(placeId) : null),
+  };
 }
 
 /** For tests. */

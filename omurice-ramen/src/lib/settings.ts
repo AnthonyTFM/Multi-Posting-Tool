@@ -13,7 +13,9 @@ export type Settings = {
   heroMediaId: string | null; // home page hero photo or looping video
   galleryIds: string[]; // home page "From our kitchen" grid, in order
   socials: Socials;
-  googlePlaceId: string; // looked up once from Google, then remembered
+  googlePlaceId: string; // looked up once from Google (or pasted in /admin/reviews), then remembered
+  reviewRating: number; // shown when the Google API isn't connected
+  reviewCount: number;
 };
 
 const DEFAULTS: Settings = {
@@ -27,6 +29,8 @@ const DEFAULTS: Settings = {
   galleryIds: [],
   socials: { ...RESTAURANT.social },
   googlePlaceId: "",
+  reviewRating: RESTAURANT.rating.stars,
+  reviewCount: RESTAURANT.rating.count,
 };
 
 export function getSettings(): Settings {

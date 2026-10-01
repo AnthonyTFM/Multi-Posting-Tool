@@ -1,7 +1,7 @@
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { aiConfigured, MODEL } from "@/lib/ai/client";
 import { posProvider } from "@/lib/pos";
-import { getGoogleReviews, reviewsConfigured } from "@/lib/reviews";
+import { getGoogleReviews, listManualReviews, reviewsConfigured } from "@/lib/reviews";
 import { smsEnabled } from "@/lib/twilio";
 import { staffNumber } from "@/lib/voice/twiml";
 
@@ -15,9 +15,9 @@ export default async function SettingsPage() {
     { label: "Text messages", ok: smsEnabled(), detail: smsEnabled() ? "Confirmations + ready alerts on" : "Set TWILIO_SMS_FROM to text customers" },
     {
       label: "Google reviews",
-      ok: !!google,
+      ok: !!google || listManualReviews().length > 0,
       detail: !reviewsConfigured()
-        ? "Set GOOGLE_MAPS_API_KEY to show live reviews on the home page"
+        ? `${listManualReviews().length} reviews added in the Reviews tab (optional: GOOGLE_MAPS_API_KEY for automatic updates)`
         : google
           ? `Live: ${google.rating.toFixed(1)}★ from ${google.count} reviews, ${google.reviews.length} shown in the carousel`
           : "Key set but Google didn't answer yet. Check the key's Places API (New) access and billing",

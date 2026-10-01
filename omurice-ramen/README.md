@@ -10,7 +10,7 @@ One Node.js app that runs everything:
 | AI chat | widget on every page | Answers FAQ/menu/hours/allergen questions (Claude) |
 | AI phone host | Twilio → `/api/voice/incoming` + `wss://…/voice/relay` | Takes pickup orders, books 6+ tables, answers questions, transfers to the 2nd store line on request (or press 0) |
 | Kitchen & admin | `/admin` | Live order board (chime, print tickets), reservations, menu editor (sold-out, prices, POS PLUs), AI call transcripts, settings, FAQ |
-| Google reviews | home page | Live Google rating + rotating, shuffled reviews (Places API, server-side, cached) with "Write a review" link |
+| Reviews | home page + `/admin/reviews` | Rotating, shuffled reviews. Staff paste real Google reviews word-for-word (no Google account needed); optional Places API key adds live ones automatically |
 | Photos & video | `/admin/media` | Upload Instagram photos/reels; pick the home hero (photo or looping video), the "From our kitchen" gallery, menu-item photos, social links |
 
 Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
@@ -58,8 +58,12 @@ AI session ends ─► /api/voice/after ─► transfer: <Dial> staff line ─(n
 
 Kill switch: **/admin/settings → AI phone host OFF** makes every call ring the staff line directly.
 
-### Google reviews
+### Reviews
 
+**No setup:** in `/admin/reviews`, paste reviews copied from the public Google listing (name, stars, text, optional link),
+plus the current average/count and (optionally) the place ID from Google's free Place ID Finder for a "Write a review" button.
+
+**Optional automatic mode (Places API):**
 1. In Google Cloud: create a project, attach billing, enable **Places API (New)**.
 2. Create an API key and restrict it to *Places API (New)* (server key; it never reaches browsers).
 3. Set `GOOGLE_MAPS_API_KEY`. The place is found automatically from the address (or set `GOOGLE_PLACE_ID`).

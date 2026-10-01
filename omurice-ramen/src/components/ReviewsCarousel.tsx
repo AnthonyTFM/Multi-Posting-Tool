@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { GoogleReview } from "@/lib/reviews";
+import type { Review } from "@/lib/reviews";
 
 const ROTATE_MS = 7000;
 
@@ -35,7 +35,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function ReviewCard({ r }: { r: GoogleReview }) {
+function ReviewCard({ r }: { r: Review }) {
   const long = r.text.length > 320;
   return (
     <figure className="flex h-full flex-col rounded-3xl border border-line bg-card p-6 shadow-soft sm:p-7">
@@ -45,9 +45,9 @@ function ReviewCard({ r }: { r: GoogleReview }) {
       </div>
       <blockquote className="mt-3 flex-1 text-[1.02rem] leading-7 text-ink-2">
         <p className={long ? "line-clamp-6" : ""}>{r.text}</p>
-        {long && r.reviewUrl && (
+        {r.reviewUrl && (
           <a href={r.reviewUrl} target="_blank" rel="noopener" className="mt-1 inline-block text-sm font-semibold text-seal hover:underline">
-            Read full review
+            {long ? "Read full review" : `View on ${r.source}`}
           </a>
         )}
       </blockquote>
@@ -66,7 +66,7 @@ function ReviewCard({ r }: { r: GoogleReview }) {
           ) : (
             <span className="block truncate font-semibold">{r.author}</span>
           )}
-          <span className="block text-xs text-ink-3">{r.relativeTime}{r.relativeTime ? " · " : ""}Google review</span>
+          <span className="block text-xs text-ink-3">{r.relativeTime}{r.relativeTime ? " · " : ""}{r.source} review</span>
         </span>
       </figcaption>
     </figure>
@@ -74,7 +74,7 @@ function ReviewCard({ r }: { r: GoogleReview }) {
 }
 
 /** Auto-rotating, shuffled Google reviews with manual controls. */
-export function ReviewsCarousel({ reviews }: { reviews: GoogleReview[] }) {
+export function ReviewsCarousel({ reviews }: { reviews: Review[] }) {
   const [list, setList] = useState(reviews);
   const [i, setI] = useState(0);
   const [auto, setAuto] = useState(true);
@@ -129,11 +129,6 @@ export function ReviewsCarousel({ reviews }: { reviews: GoogleReview[] }) {
         <div className="mt-4 flex items-center gap-3">
           <button type="button" onClick={() => go(-1, true)} className="flex h-10 w-10 items-center justify-center rounded-full bg-card ring-1 ring-line hover:ring-ink" aria-label="Previous review">‹</button>
           <button type="button" onClick={() => go(1, true)} className="flex h-10 w-10 items-center justify-center rounded-full bg-card ring-1 ring-line hover:ring-ink" aria-label="Next review">›</button>
-          <div className="flex flex-1 justify-center gap-1.5" aria-hidden>
-            {list.map((r, n) => (
-              <span key={r.id} className={`h-1.5 rounded-full transition-all ${n === i ? "w-6 bg-seal" : "w-1.5 bg-line"}`} />
-            ))}
-          </div>
           <button
             type="button"
             onClick={() => setAuto(!auto)}
@@ -146,6 +141,11 @@ export function ReviewsCarousel({ reviews }: { reviews: GoogleReview[] }) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M8 5v14l11-7z" /></svg>
             )}
           </button>
+          <div className="flex flex-1 justify-center gap-1.5" aria-hidden>
+            {list.map((r, n) => (
+              <span key={r.id} className={`h-1.5 rounded-full transition-all ${n === i ? "w-6 bg-seal" : "w-1.5 bg-line"}`} />
+            ))}
+          </div>
         </div>
       )}
     </div>

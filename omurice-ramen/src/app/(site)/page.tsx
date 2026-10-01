@@ -10,14 +10,14 @@ import { listFaqs } from "@/lib/faq";
 import { hoursSummary, openStatus } from "@/lib/hours";
 import { siteMedia } from "@/lib/media";
 import { getMenu } from "@/lib/menu";
-import { getGoogleReviews } from "@/lib/reviews";
+import { homepageReviews } from "@/lib/reviews";
 import { FULL_ADDRESS, RESTAURANT } from "@/lib/restaurant";
 import { getSettings } from "@/lib/settings";
 
 export default async function HomePage() {
   const settings = getSettings();
-  const google = await getGoogleReviews();
-  const rating = google ? { stars: google.rating, count: google.count } : RESTAURANT.rating;
+  const reviews = await homepageReviews();
+  const rating = { stars: reviews.rating, count: reviews.count };
   const status = openStatus(new Date(), settings.closures);
   const { hero, gallery } = siteMedia();
   const menu = getMenu();
@@ -63,7 +63,7 @@ export default async function HomePage() {
               <div className="flex items-center gap-1.5">
                 <StarIcon width={16} height={16} className="text-yolk" />
                 <dt className="sr-only">Rating</dt>
-                <dd><strong className="text-rice">{rating.stars.toFixed(1)}</strong> · {rating.count.toLocaleString()}{google ? "" : "+"} Google reviews</dd>
+                <dd><strong className="text-rice">{rating.stars.toFixed(1)}</strong> · {rating.count.toLocaleString()} Google reviews</dd>
               </div>
               <div className="flex items-center gap-1.5">
                 <ClockIcon width={16} height={16} />
@@ -114,35 +114,37 @@ export default async function HomePage() {
               <span className="font-display text-6xl font-extrabold leading-none">{rating.stars.toFixed(1)}</span>
               <span className="pb-1">
                 <Stars value={rating.stars} size={22} />
-                <span className="block text-sm text-ink-3">{rating.count.toLocaleString()}{google ? "" : "+"} reviews on Google</span>
+                <span className="block text-sm text-ink-3">{rating.count.toLocaleString()} reviews on Google</span>
               </span>
             </div>
             <div className="mt-6 flex flex-wrap gap-2">
-              <a href={google?.placeUrl ?? RESTAURANT.mapsUrl} target="_blank" rel="noopener" className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-rice hover:bg-ink-2">
+              <a href={reviews.placeUrl} target="_blank" rel="noopener" className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-rice hover:bg-ink-2">
                 Read all reviews
               </a>
-              {google && (
-                <a href={google.writeReviewUrl} target="_blank" rel="noopener" className="rounded-full px-5 py-2.5 text-sm font-semibold ring-1 ring-line hover:ring-ink">
+              {reviews.writeReviewUrl && (
+                <a href={reviews.writeReviewUrl} target="_blank" rel="noopener" className="rounded-full px-5 py-2.5 text-sm font-semibold ring-1 ring-line hover:ring-ink">
                   Write a review
                 </a>
               )}
             </div>
-            <p className="mt-5 text-xs text-[#5e5e5e]" translate="no" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
-              Google Maps
-            </p>
+            {reviews.live && (
+              <p className="mt-5 text-xs text-[#5e5e5e]" translate="no" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+                Google Maps
+              </p>
+            )}
           </div>
-          {google && google.reviews.length > 0 ? (
-            <ReviewsCarousel reviews={google.reviews} />
+          {reviews.reviews.length > 0 ? (
+            <ReviewsCarousel reviews={reviews.reviews} />
           ) : (
             <a
-              href={RESTAURANT.mapsUrl}
+              href={reviews.placeUrl}
               target="_blank"
               rel="noopener"
               className="group flex min-h-[220px] flex-col justify-center rounded-3xl border border-line bg-card p-8 shadow-soft transition hover:shadow-lift"
             >
               <Stars value={rating.stars} size={26} />
               <span className="mt-4 block font-display text-3xl font-extrabold">Rated {rating.stars.toFixed(1)} by Battle Creek</span>
-              <span className="mt-2 block text-ink-3">Read what {rating.count.toLocaleString()}+ guests say about our ramen, omurice and boba on Google.</span>
+              <span className="mt-2 block text-ink-3">Read what {rating.count.toLocaleString()} guests say about our ramen, omurice and boba on Google.</span>
               <span className="mt-4 inline-flex items-center gap-1 font-semibold text-seal">
                 See reviews on Google <ArrowIcon width={18} height={18} className="transition group-hover:translate-x-0.5" />
               </span>

@@ -2,8 +2,18 @@ process.env.DATABASE_PATH = ":memory:";
 
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
-import { _resetReviewsCache, getGoogleReviews, normalizePlace, ratingSummary } from "../src/lib/reviews.ts";
-import { getSettings } from "../src/lib/settings.ts";
+import {
+  _resetReviewsCache,
+  deleteManualReview,
+  getGoogleReviews,
+  homepageReviews,
+  listManualReviews,
+  normalizePlace,
+  ratingSummary,
+  ReviewInputError,
+  saveManualReview,
+} from "../src/lib/reviews.ts";
+import { getSettings, updateSettings } from "../src/lib/settings.ts";
 
 // Synthetic API payload for tests only; the site never shows made-up reviews.
 const PLACE = {
@@ -72,4 +82,46 @@ test("looks up the place once, caches reviews, serves stale data if Google fails
   assert.equal(stale?.count, 471);
   assert.equal((await getGoogleReviews())?.count, 471);
   assert.ok(calls.length > 2 && !calls.slice(2).some((c) => c.url.endsWith("searchText"))); // place ID not looked up again
+});
+
+test("staff-entered reviews: validated, hideable, shown with the entered rating", async () => {
+  updateSettings({ googlePlaceId: "" }); // an earlier test stored one
+  assert.throws(() => saveManualReview({ author: "", rating: 5, text: "x", source: "Google" }), ReviewInputError);
+  assert.throws(() => saveManualReview({ author: "A", rating: 6, text: "x", source: "Google" }), ReviewInputError);
+  assert.throws(() => saveManualReview({ author: "A", rating: 5, text: "x", source: "Google", url: "javascript:alert(1)" }), ReviewInputError);
+  saveManualReview({ author: "Tester One", rating: 5, text: "Test text one", source: "Google", when: "Sep 2026", url: "https://maps.app.goo.gl/x" });
+  saveManualReview({ author: "Tester Two", rating: 4, text: "Test text two", source: "Yelp" });
+  const [one, two] = listManualReviews();
+  saveManualReview({ ...two, active: false });
+  updateSettings({ reviewRating: 4.7, reviewCount: 480 });
+
+  let h = await homepageReviews();
+  assert.equal(h.live, false);
+  assert.deepEqual([h.rating, h.count], [4.7, 480]);
+  assert.deepEqual(h.reviews.map((r) => r.author), ["Tester One"]); // hidden one excluded
+  assert.equal(h.reviews[0].source, "Google");
+  assert.equal(h.reviews[0].reviewUrl, "https://maps.app.goo.gl/x");
+  assert.equal(h.writeReviewUrl, null); // no place ID yet
+
+  updateSettings({ googlePlaceId: "ChIJmanual123" });
+  h = await homepageReviews();
+  assert.equal(h.writeReviewUrl, "https://search.google.com/local/writereview?placeid=ChIJmanual123");
+  assert.deepEqual(await ratingSummary(), { stars: 4.7, count: 480 });
+  deleteManualReview(one.id);
+  deleteManualReview(two.id);
+  updateSettings({ googlePlaceId: "", reviewRating: 4.8, reviewCount: 466 });
+});
+
+test("live Google reviews and pasted ones combine without duplicates", async () => {
+  process.env.GOOGLE_MAPS_API_KEY = "test-key";
+  updateSettings({ googlePlaceId: "ChIJtest" });
+  globalThis.fetch = (async () => Response.json(PLACE)) as unknown as typeof fetch;
+  saveManualReview({ author: "Tester A", rating: 5, text: "Test review A", source: "Google" }); // same as a live one
+  saveManualReview({ author: "Tester Z", rating: 5, text: "Only pasted", source: "Facebook" });
+  const h = await homepageReviews();
+  assert.equal(h.live, true);
+  assert.deepEqual(h.reviews.map((r) => r.author), ["Tester A", "Google user", "Tester Z"]);
+  assert.equal(h.count, 471);
+  for (const r of listManualReviews()) deleteManualReview(r.id);
+  updateSettings({ googlePlaceId: "" });
 });
