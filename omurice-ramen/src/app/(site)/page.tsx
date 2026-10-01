@@ -212,7 +212,7 @@ export default async function HomePage() {
           <div className="relative grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-center">
             <div>
               <h2 className="text-4xl font-extrabold sm:text-5xl">Order direct. Pay less.</h2>
-              <p className="mt-4 max-w-lg text-lg leading-8 text-white/85">
+              <p className="mt-4 max-w-lg text-lg leading-8 text-white">
                 Delivery apps list our menu at higher prices and take a cut. Order pickup here and you get our in-store prices, every time. 100% of your order supports our kitchen.
               </p>
             </div>

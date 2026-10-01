@@ -33,7 +33,10 @@ are converted to H.264 MP4 ≤1920px, 30fps, plus a poster frame. Without ffmpeg
 Needs a host that supports **long-lived WebSockets and a persistent disk** (the phone agent and SQLite).
 Railway, Render or Fly.io all work. Vercel/Netlify do **not** (no WebSockets for the phone relay).
 
-1. Create the service from this folder (Dockerfile included), attach a volume at `/data`.
+1. **Render (one click):** Dashboard → New → **Blueprint** → select this repo. `render.yaml` creates the web service
+   (Docker), a 5 GB disk at `/data`, a generated `SESSION_SECRET`, and prompts for the other secrets.
+   **Railway / Fly.io:** create a service from the `omurice-ramen/` folder (Dockerfile included) and attach a volume at `/data`.
+   Health check: `GET /api/health`.
 2. Set env vars from [.env.example](./.env.example). Production refuses to run admin login without `SESSION_SECRET` and `ADMIN_PASSWORD`, and rejects unsigned Twilio webhooks.
 3. Point a domain at it (soft-launch on `new.omuriceramen.com` first; see LAUNCH.md).
 4. Back up `/data` daily: `omurice.db` plus the `media/` folder of uploaded photos/videos (`MEDIA_DIR` overrides the location).

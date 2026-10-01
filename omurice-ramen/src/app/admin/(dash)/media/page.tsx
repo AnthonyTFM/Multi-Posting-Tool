@@ -10,13 +10,16 @@ type Upload = { name: string; progress: number; error?: string; processing?: boo
 
 const MAX_EDGE = 2000;
 
-/** Downscale big photos in the browser (12MP phone shots -> ~2000px JPEG). */
+/**
+ * Downscale big photos in the browser (12MP phone shots -> ~2000px) and
+ * re-encode every JPEG, which drops hidden EXIF data such as GPS location.
+ */
 async function prepareImage(file: File): Promise<Blob> {
   if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
   try {
-    const bmp = await createImageBitmap(file);
+    const bmp = await createImageBitmap(file); // applies EXIF rotation
     const scale = Math.min(1, MAX_EDGE / Math.max(bmp.width, bmp.height));
-    if (scale === 1 && file.size < 1.5 * 1024 * 1024) return file;
+    if (scale === 1 && file.type !== "image/jpeg" && file.size < 1.5 * 1024 * 1024) return file;
     const canvas = document.createElement("canvas");
     canvas.width = Math.round(bmp.width * scale);
     canvas.height = Math.round(bmp.height * scale);

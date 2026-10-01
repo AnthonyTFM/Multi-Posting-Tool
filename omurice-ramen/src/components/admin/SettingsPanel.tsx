@@ -136,7 +136,7 @@ export function SettingsPanel() {
             <span className="block font-semibold">Site announcement banner</span>
             <span className="block text-sm text-ink-3">e.g. &ldquo;Closed Thanksgiving Day&rdquo; or &ldquo;New: Matcha Strawberry Latte!&rdquo;. Leave empty to hide. The AI mentions it too.</span>
             <div className="mt-2 flex gap-2">
-              <input value={announcement} onChange={(e) => setAnnouncement(e.target.value)} maxLength={200} className="flex-1 rounded-lg border border-line bg-rice px-3 py-2 text-sm" />
+              <input value={announcement} onChange={(e) => setAnnouncement(e.target.value)} maxLength={200} className="flex-1 rounded-lg border border-line bg-rice px-3 py-2 text-sm" aria-label="Site announcement banner text" />
               <button type="button" onClick={() => patch({ announcement })} className="rounded-full bg-ink px-4 text-sm font-semibold text-rice">Save</button>
             </div>
           </div>
@@ -150,7 +150,7 @@ export function SettingsPanel() {
                   <button type="button" onClick={() => patch({ closures: s.closures.filter((x) => x !== d) })} aria-label={`Remove ${d}`} className="text-ink-3 hover:text-seal">×</button>
                 </span>
               ))}
-              <input type="date" value={newClosure} onChange={(e) => setNewClosure(e.target.value)} className="rounded-lg border border-line bg-rice px-3 py-1 text-sm" />
+              <input type="date" value={newClosure} onChange={(e) => setNewClosure(e.target.value)} className="rounded-lg border border-line bg-rice px-3 py-1 text-sm" aria-label="Closure date to add" />
               <button
                 type="button"
                 disabled={!newClosure}

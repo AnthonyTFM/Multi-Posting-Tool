@@ -217,8 +217,9 @@ export function KitchenBoard() {
             if (!sound) chime();
             setSound(!sound);
           }}
-          className={`h-10 rounded-full px-4 text-sm font-semibold ${sound ? "bg-matcha text-white" : "bg-seal text-white animate-pulse"}`}
+          className={`flex h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold ${sound ? "bg-matcha text-white" : "bg-seal text-white"}`}
         >
+          {!sound && <span className="h-2 w-2 animate-ping rounded-full bg-white" aria-hidden />}
           {sound ? "🔔 Sound on" : "🔕 Tap to enable sound"}
         </button>
         <label className="flex h-10 items-center gap-2 rounded-full bg-card px-4 text-sm font-semibold ring-1 ring-line">

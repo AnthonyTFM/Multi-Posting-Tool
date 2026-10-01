@@ -24,7 +24,7 @@ export function SiteFooter({ socials, rating }: { socials: Socials; rating: { st
             {socials.facebook && <a href={socials.facebook} target="_blank" rel="noopener" className="rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20">Facebook</a>}
             {socials.tiktok && <a href={socials.tiktok} target="_blank" rel="noopener" className="rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20">TikTok</a>}
           </div>
-          <p className="mt-6 font-jp text-2xl text-rice/20" aria-hidden>
+          <p className="mt-6 font-jp text-2xl text-rice/40" aria-hidden>
             オムライス・ラーメン
           </p>
         </div>
