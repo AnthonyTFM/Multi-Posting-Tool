@@ -35,7 +35,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (b.posPlu !== undefined) patch.posPlu = String(b.posPlu ?? "").trim().slice(0, 40) || null;
   if (b.image !== undefined) {
     const img = String(b.image ?? "").trim();
-    if (img && !/^(https:\/\/|\/images\/)/.test(img)) return Response.json({ error: "Image must be an https:// URL or /images/… path" }, { status: 400 });
+    if (img && !/^(https:\/\/|\/images\/|\/media\/)[^\s"<>]*$/.test(img)) {
+      return Response.json({ error: "Image must be from the photo library, an https:// URL or /images/… path" }, { status: 400 });
+    }
     patch.image = img || null;
   }
   if (b.optionGroups !== undefined) {

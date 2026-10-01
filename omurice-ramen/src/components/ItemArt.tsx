@@ -4,12 +4,12 @@
 import type { Art } from "@/lib/menu-types";
 
 export const ART_BG: Record<Art, string> = {
-  ramen: "#fde6c8",
-  omurice: "#fff1c7",
-  boba: "#efe6fb",
-  appetizer: "#f9e3d6",
-  dessert: "#fde3ea",
-  drink: "#dff0f5",
+  ramen: "#efe3d2",
+  omurice: "#f2e7cf",
+  boba: "#e8e3ec",
+  appetizer: "#ece0d6",
+  dessert: "#f0e2e4",
+  drink: "#e0eaec",
 };
 
 function Steam() {
@@ -28,9 +28,9 @@ function Ramen() {
       <Steam />
       <line x1="70" y1="20" x2="102" y2="64" stroke="#7a4b2a" strokeWidth="3" strokeLinecap="round" />
       <line x1="80" y1="18" x2="106" y2="62" stroke="#7a4b2a" strokeWidth="3" strokeLinecap="round" />
-      <path d="M14 62 H106 A46 42 0 0 1 14 62 Z" fill="#d23a2a" />
-      <path d="M20 74 H100" stroke="#b02c1e" strokeWidth="4" />
-      <path d="M50 101 h20 v6 h-20z" fill="#b02c1e" />
+      <path d="M14 62 H106 A46 42 0 0 1 14 62 Z" fill="#c4262e" />
+      <path d="M20 74 H100" stroke="#9f1c23" strokeWidth="4" />
+      <path d="M50 101 h20 v6 h-20z" fill="#9f1c23" />
       <ellipse cx="60" cy="62" rx="46" ry="11" fill="#e9a15a" />
       <path d="M26 62 q6 -5 12 0 t12 0 t12 0 t12 0 t12 0" stroke="#ffd96a" strokeWidth="3" fill="none" strokeLinecap="round" />
       <rect x="74" y="42" width="14" height="20" rx="2" fill="#1f2a1f" transform="rotate(12 81 52)" />
@@ -53,7 +53,7 @@ function Omurice() {
       <ellipse cx="60" cy="82" rx="42" ry="12" fill="none" stroke="#e6dccb" strokeWidth="1.5" />
       <path d="M20 80 C20 44, 100 44, 100 80 Q60 88 20 80 Z" fill="#f6b91a" />
       <path d="M30 64 C40 52, 70 50, 86 60" stroke="#ffd96a" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.8" />
-      <path d="M30 70 l8 -8 l8 8 l8 -8 l8 8 l8 -8 l8 8 l8 -8" stroke="#d23a2a" strokeWidth="4.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M30 70 l8 -8 l8 8 l8 -8 l8 8 l8 -8 l8 8 l8 -8" stroke="#c4262e" strokeWidth="4.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="94" cy="86" r="3" fill="#6f9a4b" />
       <circle cx="99" cy="83" r="2.4" fill="#6f9a4b" />
     </>
@@ -63,7 +63,7 @@ function Omurice() {
 function Boba() {
   return (
     <>
-      <rect x="62" y="6" width="7" height="44" rx="3" fill="#d23a2a" transform="rotate(14 65 28)" />
+      <rect x="62" y="6" width="7" height="44" rx="3" fill="#c4262e" transform="rotate(14 65 28)" />
       <path d="M36 36 L84 36 L77 104 Q60 109 43 104 Z" fill="#fffdf8" opacity="0.65" />
       <path d="M38.5 52 L81.5 52 L77 104 Q60 109 43 104 Z" fill="#c99a6b" />
       <path d="M39 60 L81 60" stroke="#e5c39b" strokeWidth="3" />
@@ -118,7 +118,7 @@ function Drink() {
     <>
       <path d="M50 14 h20 v14 q10 8 10 22 v48 q0 8 -8 8 h-24 q-8 0 -8 -8 v-48 q0 -14 10 -22 z" fill="#8fd0e3" opacity="0.85" />
       <path d="M44 62 h32 v36 q0 6 -6 6 h-20 q-6 0 -6 -6z" fill="#5fb7d1" />
-      <rect x="48" y="8" width="24" height="8" rx="3" fill="#d23a2a" />
+      <rect x="48" y="8" width="24" height="8" rx="3" fill="#c4262e" />
       <circle cx="60" cy="40" r="5" fill="#ffffff" opacity="0.9" />
       <path d="M50 70 v24" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" opacity="0.6" />
     </>

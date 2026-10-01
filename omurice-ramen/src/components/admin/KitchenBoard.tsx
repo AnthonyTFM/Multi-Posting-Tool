@@ -8,7 +8,7 @@ import { adminFetch, fmtPhone, fmtTime } from "./api";
 type Board = { orders: Order[]; settings: { orderingPaused: boolean; prepMinutes: number } };
 
 const COLUMNS: { status: OrderStatus; title: string; tone: string }[] = [
-  { status: "new", title: "New", tone: "bg-ketchup text-white" },
+  { status: "new", title: "New", tone: "bg-seal text-white" },
   { status: "preparing", title: "Cooking", tone: "bg-yolk text-ink" },
   { status: "ready", title: "Ready for pickup", tone: "bg-matcha text-white" },
 ];
@@ -75,7 +75,7 @@ function OrderCard({ o, now, onStatus, onPrint, onRetry, fresh }: {
   const late = mins < 0 && o.status !== "ready";
   const next = NEXT[o.status];
   return (
-    <article className={`rounded-2xl border bg-card p-4 shadow-soft ${fresh ? "border-ketchup ring-4 ring-ketchup/25" : "border-line"}`}>
+    <article className={`rounded-2xl border bg-card p-4 shadow-soft ${fresh ? "border-seal ring-4 ring-seal/25" : "border-line"}`}>
       <header className="flex items-start justify-between gap-2">
         <div>
           <p className="font-display text-3xl font-extrabold leading-none">#{o.number}</p>
@@ -87,7 +87,7 @@ function OrderCard({ o, now, onStatus, onPrint, onRetry, fresh }: {
             {o.source === "phone" ? "AI phone" : "Web"}
           </span>
           <p className="mt-1 text-lg font-bold">{o.asap ? "ASAP " : ""}{fmtTime(o.pickupAt)}</p>
-          <p className={`text-xs font-semibold ${late ? "text-ketchup" : "text-ink-3"}`}>
+          <p className={`text-xs font-semibold ${late ? "text-seal" : "text-ink-3"}`}>
             {late ? `${-mins} min late` : mins <= 0 ? "due now" : `in ${mins} min`}
           </p>
         </div>
@@ -104,7 +104,7 @@ function OrderCard({ o, now, onStatus, onPrint, onRetry, fresh }: {
       {o.notes && <p className="mt-3 rounded-lg bg-yolk-soft px-3 py-2 text-sm"><strong>Note:</strong> {o.notes}</p>}
       <p className="mt-3 text-sm text-ink-2">{formatCents(o.totalCents)} · <strong>pay at pickup</strong></p>
       {o.posStatus === "failed" && (
-        <p className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-ketchup/10 px-3 py-2 text-xs text-ketchup-2">
+        <p className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-seal/10 px-3 py-2 text-xs text-seal-2">
           <span title={o.posError ?? ""}>POS sync failed. Ring it in manually.</span>
           <button type="button" onClick={onRetry} className="font-bold underline">Retry</button>
         </p>
@@ -122,7 +122,7 @@ function OrderCard({ o, now, onStatus, onPrint, onRetry, fresh }: {
           <button
             type="button"
             onClick={() => confirm(`Cancel order #${o.number}? The customer gets a text.`) && onStatus("cancelled")}
-            className="h-11 rounded-xl px-3 text-sm font-semibold text-ketchup ring-1 ring-line hover:ring-ketchup"
+            className="h-11 rounded-xl px-3 text-sm font-semibold text-seal ring-1 ring-line hover:ring-seal"
           >
             Cancel
           </button>
@@ -210,14 +210,14 @@ export function KitchenBoard() {
     <div>
       <div className="flex flex-wrap items-center gap-3 print:hidden">
         <h1 className="mr-auto text-3xl font-extrabold">Orders</h1>
-        {error && <span className="rounded-full bg-ketchup px-3 py-1 text-xs font-bold text-white">Offline: {error}</span>}
+        {error && <span className="rounded-full bg-seal px-3 py-1 text-xs font-bold text-white">Offline: {error}</span>}
         <button
           type="button"
           onClick={() => {
             if (!sound) chime();
             setSound(!sound);
           }}
-          className={`h-10 rounded-full px-4 text-sm font-semibold ${sound ? "bg-matcha text-white" : "bg-ketchup text-white animate-pulse"}`}
+          className={`h-10 rounded-full px-4 text-sm font-semibold ${sound ? "bg-matcha text-white" : "bg-seal text-white animate-pulse"}`}
         >
           {sound ? "🔔 Sound on" : "🔕 Tap to enable sound"}
         </button>
@@ -234,7 +234,7 @@ export function KitchenBoard() {
         <button
           type="button"
           onClick={() => patchSettings({ orderingPaused: !board.settings.orderingPaused })}
-          className={`h-10 rounded-full px-4 text-sm font-semibold ${board.settings.orderingPaused ? "bg-ketchup text-white" : "bg-card ring-1 ring-line hover:ring-ink"}`}
+          className={`h-10 rounded-full px-4 text-sm font-semibold ${board.settings.orderingPaused ? "bg-seal text-white" : "bg-card ring-1 ring-line hover:ring-ink"}`}
         >
           {board.settings.orderingPaused ? "⏸ Ordering PAUSED · resume" : "Pause online + phone orders"}
         </button>
@@ -282,7 +282,7 @@ export function KitchenBoard() {
                     <td className="px-4 py-2">{o.lines.reduce((s, l) => s + l.quantity, 0)} items</td>
                     <td className="px-4 py-2">{formatCents(o.totalCents)}</td>
                     <td className="px-4 py-2">{fmtTime(o.pickupAt)}</td>
-                    <td className="px-4 py-2">{o.status === "cancelled" ? <span className="text-ketchup">Cancelled</span> : "Picked up"}</td>
+                    <td className="px-4 py-2">{o.status === "cancelled" ? <span className="text-seal">Cancelled</span> : "Picked up"}</td>
                   </tr>
                 ))}
               </tbody>

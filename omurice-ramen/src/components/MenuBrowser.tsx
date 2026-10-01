@@ -34,7 +34,7 @@ export function ItemCard({ item, art, onSelect, orderingOpen }: { item: MenuItem
       <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-32">
         <ItemVisual art={art} image={item.image} name={item.name} className="transition duration-300 group-hover:scale-105" />
         {!disabled && (
-          <span className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-card text-ink shadow-soft transition group-hover:bg-ketchup group-hover:text-white">
+          <span className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-card text-ink shadow-soft transition group-hover:bg-seal group-hover:text-white">
             <PlusIcon width={16} height={16} />
           </span>
         )}
@@ -119,7 +119,7 @@ export function MenuBrowser({ menu, orderingOpen }: { menu: Menu; orderingOpen: 
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex h-14 w-full items-center justify-between rounded-full bg-ketchup px-6 text-white shadow-lift"
+            className="flex h-14 w-full items-center justify-between rounded-full bg-seal px-6 text-white shadow-lift"
           >
             <span className="flex h-7 min-w-7 items-center justify-center rounded-full bg-white/20 px-2 text-sm font-bold">{count}</span>
             <span className="font-semibold">View order</span>

@@ -12,28 +12,34 @@ const NAV = [
   { href: "/faq", label: "FAQ" },
 ];
 
-export function Logo({ light = false }: { light?: boolean }) {
+// The round badge is the restaurant's own logo (from Instagram). Replace
+// public/brand/logo.png with the original artwork for a sharper version.
+export function Logo({ light = false, size = 44 }: { light?: boolean; size?: number }) {
   return (
     <span className="flex items-center gap-2.5">
-      <svg viewBox="0 0 40 40" className="h-9 w-9 shrink-0" aria-hidden>
-        <circle cx="20" cy="20" r="20" fill="#f6b91a" />
-        <path d="M8 24 C8 13, 32 13, 32 24 Q20 27 8 24 Z" fill="#ffd96a" />
-        <path d="M12 20 l3 -3 l3 3 l3 -3 l3 3 l3 -3" stroke="#d23a2a" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M8 27 h24" stroke="#1d1a16" strokeWidth="2.4" strokeLinecap="round" />
-      </svg>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/brand/logo.png" alt="" width={size} height={size} className={`shrink-0 rounded-full bg-white ${light ? "" : "ring-1 ring-line"}`} />
       <span className="leading-none">
-        <span className={`block font-display text-[1.35rem] font-extrabold tracking-tight ${light ? "text-rice" : "text-ink"}`}>
-          omurice
-        </span>
-        <span className={`block text-[0.62rem] font-semibold uppercase tracking-[0.22em] ${light ? "text-yolk-2" : "text-ketchup"}`}>
-          Ramen &amp; Boba
+        <span className={`block font-display text-[1.25rem] font-extrabold ${light ? "text-rice" : "text-ink"}`}>Omurice Ramen</span>
+        <span className={`mt-1 block font-[family-name:var(--font-cond)] text-[0.66rem] font-medium uppercase tracking-[0.28em] ${light ? "text-rice/60" : "text-seal"}`}>
+          &amp; Boba Tea
         </span>
       </span>
     </span>
   );
 }
 
-export function SiteHeader({ phoneDisplay, phoneE164 }: { phoneDisplay: string; phoneE164: string }) {
+export function InstagramIcon(p: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth={2} aria-hidden {...p}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function SiteHeader({ phoneDisplay, phoneE164, instagramUrl }: { phoneDisplay: string; phoneE164: string; instagramUrl: string }) {
   const { count, setOpen } = useCart();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,6 +66,11 @@ export function SiteHeader({ phoneDisplay, phoneE164 }: { phoneDisplay: string; 
           ))}
         </nav>
 
+        {instagramUrl && (
+          <a href={instagramUrl} target="_blank" rel="noopener" className="hidden h-10 w-10 items-center justify-center rounded-full text-ink-2 hover:bg-rice-2 hover:text-ink md:flex" aria-label="Instagram">
+            <InstagramIcon />
+          </a>
+        )}
         <a href={`tel:${phoneE164}`} className="hidden items-center gap-1.5 text-sm font-medium text-ink-2 hover:text-ink lg:flex">
           <PhoneIcon width={16} height={16} /> {phoneDisplay}
         </a>
@@ -98,6 +109,11 @@ export function SiteHeader({ phoneDisplay, phoneE164 }: { phoneDisplay: string; 
           <a href={`tel:${phoneE164}`} className="flex items-center gap-2 py-3.5 text-base font-semibold">
             <PhoneIcon width={18} height={18} /> Call {phoneDisplay}
           </a>
+          {instagramUrl && (
+            <a href={instagramUrl} target="_blank" rel="noopener" className="flex items-center gap-2 py-3.5 text-base font-semibold">
+              <InstagramIcon width={18} height={18} /> Instagram
+            </a>
+          )}
         </nav>
       )}
     </header>

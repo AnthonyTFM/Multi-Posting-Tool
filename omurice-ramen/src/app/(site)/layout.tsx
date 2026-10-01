@@ -35,6 +35,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday", "Saturday"], opens: "11:00", closes: "22:30" },
       { "@type": "OpeningHoursSpecification", dayOfWeek: "Sunday", opens: "12:00", closes: "21:30" },
     ],
+    sameAs: Object.values(settings.socials).filter(Boolean),
     aggregateRating: { "@type": "AggregateRating", ratingValue: RESTAURANT.rating.stars, reviewCount: RESTAURANT.rating.count },
   };
 
@@ -42,13 +43,13 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <CartProvider>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {banner && (
-        <div className="bg-ketchup px-4 py-2 text-center text-sm font-medium text-white" role="status">
+        <div className="bg-seal px-4 py-2 text-center text-sm font-medium text-white" role="status">
           {banner}
         </div>
       )}
-      <SiteHeader phoneDisplay={RESTAURANT.phoneDisplay} phoneE164={RESTAURANT.phoneE164} />
+      <SiteHeader phoneDisplay={RESTAURANT.phoneDisplay} phoneE164={RESTAURANT.phoneE164} instagramUrl={settings.socials.instagram} />
       <main>{children}</main>
-      <SiteFooter />
+      <SiteFooter socials={settings.socials} />
       <CartDrawer />
       <ChatWidget />
     </CartProvider>

@@ -50,7 +50,7 @@ export function OrderStatusView({ initial, isNew }: { initial: Order; isNew: boo
           <p className="text-sm">We texted a confirmation to your phone. Keep this page open to follow along.</p>
         </div>
       )}
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ketchup">Order #{order.number}</p>
+      <p className="eyebrow text-seal">Order #{order.number}</p>
       <h1 className="mt-2 text-4xl font-extrabold sm:text-5xl">
         {order.status === "cancelled"
           ? "Order cancelled"
@@ -83,14 +83,14 @@ export function OrderStatusView({ initial, isNew }: { initial: Order; isNew: boo
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <a href={RESTAURANT.mapsUrl} target="_blank" rel="noopener" className="flex items-start gap-3 rounded-2xl border border-line bg-card p-5 shadow-soft hover:border-ink">
-          <PinIcon className="mt-0.5 shrink-0 text-ketchup" />
+          <PinIcon className="mt-0.5 shrink-0 text-seal" />
           <span>
             <span className="block font-semibold">{RESTAURANT.address.line1}</span>
             <span className="block text-sm text-ink-3">{RESTAURANT.address.city}, {RESTAURANT.address.state} · Directions →</span>
           </span>
         </a>
         <a href={`tel:${RESTAURANT.phoneE164}`} className="flex items-start gap-3 rounded-2xl border border-line bg-card p-5 shadow-soft hover:border-ink">
-          <PhoneIcon className="mt-0.5 shrink-0 text-ketchup" />
+          <PhoneIcon className="mt-0.5 shrink-0 text-seal" />
           <span>
             <span className="block font-semibold">{RESTAURANT.phoneDisplay}</span>
             <span className="block text-sm text-ink-3">Need to change something? Call us.</span>
@@ -121,7 +121,7 @@ export function OrderStatusView({ initial, isNew }: { initial: Order; isNew: boo
       </section>
 
       <p className="mt-8 text-center">
-        <Link href="/menu" className="font-semibold text-ketchup hover:underline">Order something else →</Link>
+        <Link href="/menu" className="font-semibold text-seal hover:underline">Order something else →</Link>
       </p>
     </div>
   );

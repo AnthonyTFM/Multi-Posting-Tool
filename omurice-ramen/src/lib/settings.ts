@@ -1,6 +1,8 @@
 import { db } from "./db.ts";
 import { RESTAURANT } from "./restaurant.ts";
 
+export type Socials = { instagram: string; facebook: string; tiktok: string };
+
 export type Settings = {
   prepMinutes: number;
   orderingPaused: boolean;
@@ -8,6 +10,9 @@ export type Settings = {
   closures: string[]; // "YYYY-MM-DD" days closed (holidays)
   announcement: string; // banner shown site-wide when non-empty
   aiPhoneEnabled: boolean; // off = every call rings the staff line directly
+  heroMediaId: string | null; // home page hero photo or looping video
+  galleryIds: string[]; // home page "From our kitchen" grid, in order
+  socials: Socials;
 };
 
 const DEFAULTS: Settings = {
@@ -17,11 +22,14 @@ const DEFAULTS: Settings = {
   closures: [],
   announcement: "",
   aiPhoneEnabled: true,
+  heroMediaId: null,
+  galleryIds: [],
+  socials: { ...RESTAURANT.social },
 };
 
 export function getSettings(): Settings {
   const rows = db().prepare("SELECT key, value FROM settings").all() as { key: string; value: string }[];
-  const out: Settings = { ...DEFAULTS };
+  const out: Settings = { ...DEFAULTS, socials: { ...DEFAULTS.socials } };
   for (const { key, value } of rows) {
     if (key in out) {
       try {

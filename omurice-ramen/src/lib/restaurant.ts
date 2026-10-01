@@ -4,7 +4,7 @@
 export const RESTAURANT = {
   name: "Omurice Ramen & Boba Tea",
   shortName: "Omurice Ramen",
-  tagline: "Handcrafted ramen, fluffy omurice & fresh boba in Battle Creek",
+  tagline: "Authentic Japanese omurice, ramen & boba tea in Battle Creek",
   address: {
     line1: "5420 Beckley Rd, Suite G",
     city: "Battle Creek",
@@ -18,11 +18,13 @@ export const RESTAURANT = {
     "https://www.google.com/maps/search/?api=1&query=Omurice+Ramen+5420+Beckley+Rd+Suite+G+Battle+Creek+MI+49015",
   doordashUrl: "https://www.doordash.com/store/omurice-ramen-&-boba-tea-battle-creek-41175476/",
   rating: { stars: 4.8, count: 466 },
+  // Defaults; editable in /admin/media.
   social: {
-    instagram: "",
+    instagram: "https://www.instagram.com/omurice_ramen_boba/",
     facebook: "",
     tiktok: "",
   },
+  instagramHandle: "omurice_ramen_boba",
   // Reservations are only for large groups; smaller parties walk in.
   reservations: {
     minParty: 6,

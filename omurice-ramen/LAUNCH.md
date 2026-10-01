@@ -10,7 +10,9 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 | # | Item | Why | Format | Blocks launch? |
 |---|---|---|---|---|
 | 1 | **Menu check**: confirm prices/descriptions of the 25 items flagged "Verify" in `/admin/menu`, plus anything missing (Ramen Combos, desserts, sodas) | Only ~8 prices were confirmable from public sources. The rest are estimates or placeholders | Photo of the printed menu or Honor POS item export | **Yes** |
-| 2 | **Food photos** (top 10 sellers first) | Photos lift online conversion; illustrations are placeholders | JPG, 1200×900+, natural light, ramen top-down, omurice at 45° | No (illustrations work meanwhile) |
+| 2 | **Your Instagram photos & reels**: upload them yourself in `/admin/media` (drag & drop), or attach them in chat | Hero video, gallery and menu photos. Illustrations fill in until then | Originals from your phone/IG (Reels download as MP4). 1 hero clip 8–20 s + 6–12 gallery shots + 1 photo per top-10 dish | No (neon design works meanwhile) |
+| 2b | **Logo file** (original PNG/SVG/AI) | The current logo is cropped from your Instagram profile picture (fine small, soft when large) | Whatever your designer delivered | No |
+| 2c | **Facebook / TikTok links** | Add to header/footer | Paste in `/admin/media` → Social links | No |
 | 3 | **2nd store line number** for "speak to a human" transfers | Transfer destination | 10-digit number. Must NOT be forwarded | **Yes** (for phone) |
 | 4 | **Twilio account** (you own it; add card) | Phone number, AI voice, texts | Account SID + Auth Token | **Yes** (for phone/texts) |
 | 5 | **Anthropic API key** (console.anthropic.com) | Powers chat + phone AI | `sk-ant-…` key | **Yes** (for AI) |
@@ -25,7 +27,7 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 
 | When | Task | Owner | Done when |
 |---|---|---|---|
-| Day 1 | Verify menu + FAQ in `/admin`; send photos | You | Zero "Verify" badges |
+| Day 1 | Verify menu + FAQ in `/admin`; upload photos/reels in `/admin/media`, set hero + gallery + dish photos | You | Zero "Verify" badges; hero set |
 | Day 1 | Create Twilio + Anthropic + Railway/Render accounts | You | Keys in hand |
 | Day 2 | Deploy to `new.omuriceramen.com`, set env vars, run `npm run ai:check` | Dev | Site loads; AI check passes |
 | Day 2 | Buy Twilio 269 number, point webhook, set transfer line | Dev | Test call: order placed, transfer rings 2nd line |

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { hoursSummary } from "@/lib/hours";
 import { FULL_ADDRESS, RESTAURANT } from "@/lib/restaurant";
+import type { Socials } from "@/lib/settings";
 import { StarIcon } from "./icons";
-import { Logo } from "./SiteHeader";
+import { InstagramIcon, Logo } from "./SiteHeader";
 
-export function SiteFooter() {
+export function SiteFooter({ socials }: { socials: Socials }) {
   return (
     <footer className="mt-24 bg-ink text-rice">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
@@ -14,13 +15,22 @@ export function SiteFooter() {
           <p className="mt-4 flex items-center gap-1.5 text-sm text-yolk-2">
             <StarIcon width={16} height={16} /> {RESTAURANT.rating.stars} from {RESTAURANT.rating.count}+ reviews
           </p>
-          <p className="mt-6 font-jp text-2xl text-rice/25" aria-hidden>
+          <div className="mt-5 flex flex-wrap gap-2 text-sm">
+            {socials.instagram && (
+              <a href={socials.instagram} target="_blank" rel="noopener" className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20">
+                <InstagramIcon width={16} height={16} /> @{RESTAURANT.instagramHandle}
+              </a>
+            )}
+            {socials.facebook && <a href={socials.facebook} target="_blank" rel="noopener" className="rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20">Facebook</a>}
+            {socials.tiktok && <a href={socials.tiktok} target="_blank" rel="noopener" className="rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20">TikTok</a>}
+          </div>
+          <p className="mt-6 font-jp text-2xl text-rice/20" aria-hidden>
             オムライス・ラーメン
           </p>
         </div>
 
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-yolk-2">Hours</h3>
+          <h3 className="eyebrow text-rice/50">Hours</h3>
           <dl className="mt-4 space-y-2 text-sm">
             {hoursSummary().map((h) => (
               <div key={h.days} className="flex justify-between gap-4">
@@ -32,7 +42,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-yolk-2">Visit</h3>
+          <h3 className="eyebrow text-rice/50">Visit</h3>
           <address className="mt-4 text-sm not-italic leading-6">
             {RESTAURANT.address.line1}
             <br />
@@ -48,7 +58,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-yolk-2">Order</h3>
+          <h3 className="eyebrow text-rice/50">Order</h3>
           <ul className="mt-4 space-y-2 text-sm">
             <li><Link href="/menu" className="hover:text-yolk-2">Order pickup</Link></li>
             <li><Link href="/reservations" className="hover:text-yolk-2">Book a group table (6+)</Link></li>

@@ -43,8 +43,8 @@ export default function AdminLogin() {
             className="mt-1.5 h-12 w-full rounded-xl border border-line bg-card px-4 outline-none focus:border-ink"
           />
         </label>
-        {error && <p role="alert" className="mt-3 text-sm font-medium text-ketchup">{error}</p>}
-        <button disabled={busy || !password} className="mt-6 h-12 w-full rounded-full bg-ketchup font-semibold text-white hover:bg-ketchup-2 disabled:opacity-50">
+        {error && <p role="alert" className="mt-3 text-sm font-medium text-seal">{error}</p>}
+        <button disabled={busy || !password} className="mt-6 h-12 w-full rounded-full bg-seal font-semibold text-white hover:bg-seal-2 disabled:opacity-50">
           {busy ? "Signing in…" : "Sign in"}
         </button>
       </form>

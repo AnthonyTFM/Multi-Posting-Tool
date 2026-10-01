@@ -24,8 +24,8 @@ function RichText({ text }: { text: string }) {
         const link = p.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
         if (link) {
           const href = link[2];
-          if (href.startsWith("/")) return <Link key={i} href={href} className="font-semibold text-ketchup underline underline-offset-2">{link[1]}</Link>;
-          if (/^(https?:|tel:)/.test(href)) return <a key={i} href={href} target={href.startsWith("tel:") ? undefined : "_blank"} rel="noopener" className="font-semibold text-ketchup underline underline-offset-2">{link[1]}</a>;
+          if (href.startsWith("/")) return <Link key={i} href={href} className="font-semibold text-seal underline underline-offset-2">{link[1]}</Link>;
+          if (/^(https?:|tel:)/.test(href)) return <a key={i} href={href} target={href.startsWith("tel:") ? undefined : "_blank"} rel="noopener" className="font-semibold text-seal underline underline-offset-2">{link[1]}</a>;
           return <Fragment key={i}>{link[1]}</Fragment>;
         }
         return <Fragment key={i}>{p}</Fragment>;
@@ -155,7 +155,7 @@ export function ChatWidget() {
             )}
             {messages.map((m, i) =>
               m.role === "user" ? (
-                <div key={i} className="ml-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-md bg-ketchup px-4 py-3 text-sm leading-6 text-white">
+                <div key={i} className="ml-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-md bg-seal px-4 py-3 text-sm leading-6 text-white">
                   {m.content}
                 </div>
               ) : (
@@ -197,7 +197,7 @@ export function ChatWidget() {
                 className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-line bg-rice px-4 py-2.5 text-sm outline-none focus:border-ink"
                 aria-label="Your question"
               />
-              <button type="submit" disabled={busy || !input.trim()} className="flex h-11 w-11 items-center justify-center rounded-full bg-ketchup text-white transition hover:bg-ketchup-2 disabled:opacity-40" aria-label="Send">
+              <button type="submit" disabled={busy || !input.trim()} className="flex h-11 w-11 items-center justify-center rounded-full bg-seal text-white transition hover:bg-seal-2 disabled:opacity-40" aria-label="Send">
                 <SendIcon width={18} height={18} />
               </button>
             </div>

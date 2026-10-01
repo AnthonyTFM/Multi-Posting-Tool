@@ -117,9 +117,9 @@ export function ReservationForm({ today }: { today: string }) {
         {slots === null ? (
           <p className="mt-2 text-sm text-ink-3">Checking availability…</p>
         ) : slots.length === 0 ? (
-          <p className="mt-2 text-sm text-ketchup">{reason || "No times available that day."}</p>
+          <p className="mt-2 text-sm text-seal">{reason || "No times available that day."}</p>
         ) : usable.length === 0 ? (
-          <p className="mt-2 text-sm text-ketchup">We&apos;re full for a group of {party} that day. Try another date or call us.</p>
+          <p className="mt-2 text-sm text-seal">We&apos;re full for a group of {party} that day. Try another date or call us.</p>
         ) : (
           <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {slots.map((s) => {
@@ -130,7 +130,7 @@ export function ReservationForm({ today }: { today: string }) {
                   type="button"
                   disabled={!ok}
                   onClick={() => setTime(s.minutes)}
-                  className={`h-11 rounded-xl text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 ${time === s.minutes ? "bg-ketchup text-white" : "bg-rice ring-1 ring-line hover:ring-ink"}`}
+                  className={`h-11 rounded-xl text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-35 ${time === s.minutes ? "bg-seal text-white" : "bg-rice ring-1 ring-line hover:ring-ink"}`}
                   aria-pressed={time === s.minutes}
                 >
                   {s.label}
@@ -160,8 +160,8 @@ export function ReservationForm({ today }: { today: string }) {
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} maxLength={300} className={`${field} h-auto py-3`} placeholder="Birthday, high chair, allergies…" />
       </label>
 
-      {error && <p role="alert" className="mt-4 rounded-xl bg-ketchup/10 px-4 py-3 text-sm font-medium text-ketchup-2">{error}</p>}
-      <button type="submit" disabled={busy || time === null} className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-ketchup text-lg font-semibold text-white transition hover:bg-ketchup-2 disabled:opacity-50">
+      {error && <p role="alert" className="mt-4 rounded-xl bg-seal/10 px-4 py-3 text-sm font-medium text-seal-2">{error}</p>}
+      <button type="submit" disabled={busy || time === null} className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-seal text-lg font-semibold text-white transition hover:bg-seal-2 disabled:opacity-50">
         {busy ? "Booking…" : time === null ? "Pick a time" : `Book table for ${party}`}
       </button>
       <p className="mt-2 text-center text-[11px] leading-4 text-ink-3">

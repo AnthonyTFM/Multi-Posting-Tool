@@ -51,12 +51,12 @@ export function CartDrawer() {
 
         {lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-yolk-soft text-ketchup">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-yolk-soft text-seal">
               <BagIcon width={26} height={26} />
             </span>
             <p className="font-semibold">Your cart is empty</p>
             <p className="text-sm text-ink-3">Add a bowl of ramen or a fluffy omurice to get started.</p>
-            <Link href="/menu" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-ketchup px-5 py-2.5 text-sm font-semibold text-white hover:bg-ketchup-2">
+            <Link href="/menu" onClick={() => setOpen(false)} className="mt-2 rounded-full bg-seal px-5 py-2.5 text-sm font-semibold text-white hover:bg-seal-2">
               Browse the menu
             </Link>
           </div>
@@ -86,7 +86,7 @@ export function CartDrawer() {
               <Link
                 href="/checkout"
                 onClick={() => setOpen(false)}
-                className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-ketchup text-base font-semibold text-white transition hover:bg-ketchup-2"
+                className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-seal text-base font-semibold text-white transition hover:bg-seal-2"
               >
                 Checkout · {formatCents(subtotalCents)}
               </Link>

@@ -16,7 +16,7 @@ export default function MenuPage() {
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-10 sm:px-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ketchup">Pickup · pay in store</p>
+          <p className="eyebrow text-seal">Pickup · pay in store</p>
           <h1 className="mt-2 text-5xl font-extrabold sm:text-6xl">Menu</h1>
         </div>
         <p className={`rounded-full px-3 py-1.5 text-sm font-medium ${status.open ? "bg-matcha/15 text-[#3f6a24]" : "bg-ink/5 text-ink-2"}`}>

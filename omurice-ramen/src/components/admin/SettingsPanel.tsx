@@ -54,7 +54,7 @@ function FaqEditor() {
           <input value={editing.question} onChange={(e) => setEditing({ ...editing, question: e.target.value })} placeholder="Question" className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm font-semibold" />
           <textarea value={editing.answer} onChange={(e) => setEditing({ ...editing, answer: e.target.value })} placeholder="Answer" rows={3} className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm" />
           <div className="flex gap-2">
-            <button type="button" onClick={save} className="rounded-full bg-ketchup px-4 py-2 text-sm font-semibold text-white">Save</button>
+            <button type="button" onClick={save} className="rounded-full bg-seal px-4 py-2 text-sm font-semibold text-white">Save</button>
             <button type="button" onClick={() => setEditing(null)} className="px-3 text-sm text-ink-3">Cancel</button>
           </div>
         </div>
@@ -78,7 +78,7 @@ function FaqEditor() {
               <button
                 type="button"
                 onClick={async () => confirm("Delete this FAQ?") && setFaqs((await adminFetch<{ faqs: Faq[] }>("/api/admin/faq", { method: "DELETE", body: { id: f.id } })).faqs)}
-                className="text-ketchup hover:underline"
+                className="text-seal hover:underline"
               >
                 Delete
               </button>
@@ -147,7 +147,7 @@ export function SettingsPanel() {
               {s.closures.map((d) => (
                 <span key={d} className="flex items-center gap-1 rounded-full bg-rice-2 px-3 py-1 text-sm font-semibold">
                   {d}
-                  <button type="button" onClick={() => patch({ closures: s.closures.filter((x) => x !== d) })} aria-label={`Remove ${d}`} className="text-ink-3 hover:text-ketchup">×</button>
+                  <button type="button" onClick={() => patch({ closures: s.closures.filter((x) => x !== d) })} aria-label={`Remove ${d}`} className="text-ink-3 hover:text-seal">×</button>
                 </span>
               ))}
               <input type="date" value={newClosure} onChange={(e) => setNewClosure(e.target.value)} className="rounded-lg border border-line bg-rice px-3 py-1 text-sm" />

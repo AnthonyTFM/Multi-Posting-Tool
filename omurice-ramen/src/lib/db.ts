@@ -95,6 +95,15 @@ CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS media (
+  id TEXT PRIMARY KEY,
+  filename TEXT NOT NULL UNIQUE,
+  kind TEXT NOT NULL,
+  mime TEXT NOT NULL,
+  size INTEGER NOT NULL,
+  alt TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL
+);
 `;
 
 function seed(db: Database) {

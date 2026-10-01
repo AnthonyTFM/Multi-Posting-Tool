@@ -98,7 +98,7 @@ export function CheckoutForm() {
     return (
       <div className="mt-10 rounded-3xl border border-line bg-card p-10 text-center shadow-soft">
         <p className="text-lg font-semibold">Your cart is empty.</p>
-        <Link href="/menu" className="mt-4 inline-flex rounded-full bg-ketchup px-6 py-3 font-semibold text-white hover:bg-ketchup-2">
+        <Link href="/menu" className="mt-4 inline-flex rounded-full bg-seal px-6 py-3 font-semibold text-white hover:bg-seal-2">
           Browse the menu
         </Link>
       </div>
@@ -114,7 +114,7 @@ export function CheckoutForm() {
           {slots === null ? (
             <p className="mt-3 text-sm text-ink-3">Loading times…</p>
           ) : slots.length === 0 ? (
-            <p className="mt-3 text-sm text-ketchup">Online ordering isn&apos;t available right now. Please call us.</p>
+            <p className="mt-3 text-sm text-seal">Online ordering isn&apos;t available right now. Please call us.</p>
           ) : (
             <label className="mt-3 block">
               <span className="text-sm font-medium text-ink-2">When would you like it?</span>
@@ -172,11 +172,11 @@ export function CheckoutForm() {
           <div className="flex justify-between"><dt className="text-ink-2">Tax</dt><dd className="tabular-nums">{quote ? formatCents(quote.taxCents) : "…"}</dd></div>
           <div className="flex justify-between pt-2 text-lg font-bold"><dt>Total due at pickup</dt><dd className="tabular-nums">{quote ? formatCents(quote.totalCents) : "…"}</dd></div>
         </dl>
-        {error && <p role="alert" className="mt-4 rounded-xl bg-ketchup/10 px-4 py-3 text-sm font-medium text-ketchup-2">{error}</p>}
+        {error && <p role="alert" className="mt-4 rounded-xl bg-seal/10 px-4 py-3 text-sm font-medium text-seal-2">{error}</p>}
         <button
           type="submit"
           disabled={submitting || !quote || !slots?.length}
-          className="mt-5 flex h-14 w-full items-center justify-center rounded-full bg-ketchup text-lg font-semibold text-white transition hover:bg-ketchup-2 disabled:opacity-50"
+          className="mt-5 flex h-14 w-full items-center justify-center rounded-full bg-seal text-lg font-semibold text-white transition hover:bg-seal-2 disabled:opacity-50"
         >
           {submitting ? "Placing order…" : `Place order${quote ? ` · ${formatCents(quote.totalCents)}` : ""}`}
         </button>

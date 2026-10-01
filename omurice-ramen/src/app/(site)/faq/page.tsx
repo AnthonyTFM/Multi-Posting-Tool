@@ -19,7 +19,7 @@ export default function FaqPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 pb-16 pt-10 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ketchup">Help</p>
+      <p className="eyebrow text-seal">Help</p>
       <h1 className="mt-2 text-5xl font-extrabold">Frequently asked</h1>
       <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl bg-yolk-soft p-5">
         <p className="flex-1 text-sm leading-6">
@@ -51,7 +51,7 @@ export default function FaqPage() {
         ))}
       </div>
       <p className="mt-10 text-center text-ink-3">
-        Still stuck? Call <a href={`tel:${RESTAURANT.phoneE164}`} className="font-semibold text-ketchup">{RESTAURANT.phoneDisplay}</a>.
+        Still stuck? Call <a href={`tel:${RESTAURANT.phoneE164}`} className="font-semibold text-seal">{RESTAURANT.phoneDisplay}</a>.
       </p>
     </div>
   );

@@ -18,7 +18,7 @@ function dayLabel(date: string) {
 const BADGE: Record<ReservationStatus, string> = {
   confirmed: "bg-matcha/15 text-[#3f6a24]",
   seated: "bg-ink text-rice",
-  cancelled: "bg-ketchup/10 text-ketchup-2 line-through",
+  cancelled: "bg-seal/10 text-seal-2 line-through",
   no_show: "bg-ink/10 text-ink-3",
 };
 
@@ -100,7 +100,7 @@ export default function ReservationsAdmin() {
                             <>
                               <button type="button" onClick={() => setStatus(r, "seated")} className="rounded-lg bg-ink px-3 py-1.5 text-xs font-semibold text-rice">Seated</button>{" "}
                               <button type="button" onClick={() => setStatus(r, "no_show")} className="rounded-lg px-3 py-1.5 text-xs font-semibold ring-1 ring-line">No-show</button>{" "}
-                              <button type="button" onClick={() => setStatus(r, "cancelled")} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-ketchup ring-1 ring-line">Cancel</button>
+                              <button type="button" onClick={() => setStatus(r, "cancelled")} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-seal ring-1 ring-line">Cancel</button>
                             </>
                           )}
                           {r.status !== "confirmed" && (

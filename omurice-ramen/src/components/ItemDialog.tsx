@@ -81,7 +81,7 @@ export function ItemDialog({ item, art, onClose }: { item: MenuItem; art: Art; o
           </div>
           <div className="px-5 pb-4 pt-5">
             <h2 id="item-dialog-title" className="text-2xl font-bold">{item.name}</h2>
-            <p className="mt-1 font-semibold text-ketchup">{formatCents(item.priceCents)}</p>
+            <p className="mt-1 font-semibold text-seal">{formatCents(item.priceCents)}</p>
             {item.description && <p className="mt-3 text-sm leading-6 text-ink-2">{item.description}</p>}
 
             {item.optionGroups.map((g) => {
@@ -107,7 +107,7 @@ export function ItemDialog({ item, art, onClose }: { item: MenuItem; art: Art; o
                             name={g.id}
                             checked={on}
                             onChange={() => toggle(g.id, c.id, single, g.max)}
-                            className="h-4 w-4 accent-[#d23a2a]"
+                            className="h-4 w-4 accent-[#c4262e]"
                           />
                           <span className="flex-1">{c.name}</span>
                           {c.priceCents > 0 && <span className="text-ink-3">+{formatCents(c.priceCents)}</span>}
@@ -133,11 +133,11 @@ export function ItemDialog({ item, art, onClose }: { item: MenuItem; art: Art; o
         </div>
         <div className="flex items-center gap-3 border-t border-line bg-card px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
           <QtyStepper value={qty} onChange={(v) => setQty(Math.max(1, Math.min(30, v)))} label="quantity" />
-          <button type="button" onClick={submit} className="flex h-12 flex-1 items-center justify-center rounded-full bg-ketchup text-base font-semibold text-white transition hover:bg-ketchup-2">
+          <button type="button" onClick={submit} className="flex h-12 flex-1 items-center justify-center rounded-full bg-seal text-base font-semibold text-white transition hover:bg-seal-2">
             Add · {formatCents(unit * qty)}
           </button>
         </div>
-        {error && <p role="alert" className="bg-ketchup px-5 py-2 text-center text-sm font-medium text-white">{error}</p>}
+        {error && <p role="alert" className="bg-seal px-5 py-2 text-center text-sm font-medium text-white">{error}</p>}
       </div>
     </div>
   );

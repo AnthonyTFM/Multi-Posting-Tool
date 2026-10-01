@@ -106,7 +106,7 @@ export const SEED_CATEGORIES: { id: string; name: string; description: string; a
             min: 1,
             max: 1,
             choices: [
-              { id: "ketchup", name: "Classic ketchup", priceCents: 0 },
+              { id: "seal", name: "Classic seal", priceCents: 0 },
               { id: "demi", name: "Demi-glace", priceCents: 0 },
               { id: "curry", name: "Japanese curry", priceCents: c(1) },
             ],
@@ -366,7 +366,7 @@ export const SEED_FAQS: { question: string; answer: string }[] = [
   {
     question: "What is omurice?",
     answer:
-      "Omurice is a Japanese comfort classic: seasoned fried rice wrapped in a soft, fluffy omelet and finished with a sauce like ketchup, demi-glace or curry.",
+      "Omurice is a Japanese comfort classic: seasoned fried rice wrapped in a soft, fluffy omelet and finished with a sauce like seal, demi-glace or curry.",
   },
   {
     question: "Do you have vegetarian options?",

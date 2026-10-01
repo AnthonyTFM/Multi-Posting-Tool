@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
-/* Brand tokens: rice cream, egg-yolk yellow, ketchup red, nori ink. */
+/* Brand tokens from the Omurice Ramen logo + dining room:
+   sumi ink, rice paper, hanko-seal red, golden broth, neon sign on warm wood. */
 @theme {
-  --color-rice: #fbf6ec;
-  --color-rice-2: #f4ecdc;
-  --color-ink: #1d1a16;
-  --color-ink-2: #4a443b;
-  --color-ink-3: #7a7266;
-  --color-yolk: #f6b91a;
-  --color-yolk-2: #ffd96a;
-  --color-yolk-soft: #fff1c7;
-  --color-ketchup: #d23a2a;
-  --color-ketchup-2: #b02c1e;
-  --color-broth: #e9a15a;
-  --color-matcha: #6f9a4b;
+  --color-rice: #f7f4ef;
+  --color-rice-2: #ece6dc;
+  --color-ink: #121110;
+  --color-ink-2: #403c37;
+  --color-ink-3: #7b746b;
+  --color-yolk: #e2a93b;
+  --color-yolk-2: #f0cd84;
+  --color-yolk-soft: #f6ecd6;
+  --color-seal: #c4262e;
+  --color-seal-2: #9f1c23;
+  --color-broth: #d8a25e;
+  --color-matcha: #5f8a45;
   --color-taro: #b9a3d9;
-  --color-line: #e6dccb;
-  --color-card: #fffdf8;
+  --color-line: #e2dbcf;
+  --color-card: #fffdfa;
+  --color-neon: #e6f7ff;
+  --color-wood: #6b4429;
 
-  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Shippori Mincho B1", "Hiragino Mincho ProN", Georgia, serif;
+  --font-cond: "Oswald", "Arial Narrow", ui-sans-serif, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-jp: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
+  --font-jp: "Shippori Mincho B1", "Hiragino Mincho ProN", serif;
 
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
@@ -51,7 +55,55 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+}
+
+/* Tall condensed caps, like the OMURICE lettering in the logo */
+.eyebrow {
+  font-family: var(--font-cond);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.78rem;
+}
+
+/* The dining-room neon sign */
+.neon {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-neon);
+  text-shadow:
+    0 0 2px #fff,
+    0 0 10px #9fdcff,
+    0 0 24px #4bb1ff,
+    0 0 48px #2b7fff,
+    0 0 90px #2b7fff;
+}
+.neon-flicker {
+  animation: flicker 7s infinite;
+}
+@keyframes flicker {
+  0%, 92%, 95%, 100% { opacity: 1; }
+  93% { opacity: 0.55; }
+  94% { opacity: 0.9; }
+}
+
+/* Warm wood-panel wall behind the sign */
+.wood-wall {
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 96px),
+    radial-gradient(ellipse at 70% 25%, #6a4227 0%, #3a2414 42%, #120d09 100%);
+}
+
+/* Tiny hanko-style stamp */
+.hanko {
+  font-family: var(--font-jp);
+  background: var(--color-seal);
+  color: #fff;
+  border-radius: 3px;
+  line-height: 1;
 }
 
 :focus-visible {

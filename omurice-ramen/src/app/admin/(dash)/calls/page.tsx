@@ -11,7 +11,7 @@ const OUTCOME: Record<CallLog["outcome"], { label: string; cls: string }> = {
   transfer: { label: "Transferred", cls: "bg-yolk text-ink" },
   info: { label: "Question answered", cls: "bg-rice-2 text-ink-2" },
   hangup: { label: "Hung up", cls: "bg-rice-2 text-ink-3" },
-  error: { label: "Error", cls: "bg-ketchup text-white" },
+  error: { label: "Error", cls: "bg-seal text-white" },
 };
 
 export default function CallsAdmin() {
@@ -60,7 +60,7 @@ export default function CallsAdmin() {
             </button>
             {open === c.id && (
               <div className="space-y-2 border-t border-line px-4 py-4">
-                {c.orderId && <a href={`/order/${c.orderId}`} target="_blank" className="text-sm font-semibold text-ketchup underline">View order →</a>}
+                {c.orderId && <a href={`/order/${c.orderId}`} target="_blank" className="text-sm font-semibold text-seal underline">View order →</a>}
                 {c.transcript.map((t, i) => (
                   <p key={i} className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${t.role === "caller" ? "bg-rice-2" : "ml-auto bg-ink text-rice"}`}>
                     <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wide opacity-60">{t.role === "caller" ? "Caller" : "AI host"}</span>

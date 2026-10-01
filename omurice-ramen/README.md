@@ -10,6 +10,7 @@ One Node.js app that runs everything:
 | AI chat | widget on every page | Answers FAQ/menu/hours/allergen questions (Claude) |
 | AI phone host | Twilio → `/api/voice/incoming` + `wss://…/voice/relay` | Takes pickup orders, books 6+ tables, answers questions, transfers to the 2nd store line on request (or press 0) |
 | Kitchen & admin | `/admin` | Live order board (chime, print tickets), reservations, menu editor (sold-out, prices, POS PLUs), AI call transcripts, settings, FAQ |
+| Photos & video | `/admin/media` | Upload Instagram photos/reels; pick the home hero (photo or looping video), the "From our kitchen" gallery, menu-item photos, social links |
 
 Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
 
@@ -18,7 +19,7 @@ Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
 ```bash
 npm install
 npm run dev            # http://localhost:3000, staff dashboard at /admin (dev password: omurice)
-npm test               # 19 unit/flow tests (no API keys needed)
+npm test               # 23 unit/flow tests (no API keys needed)
 ANTHROPIC_API_KEY=… npm run ai:check   # live AI chat + scripted phone call (in-memory DB)
 ```
 
@@ -32,7 +33,7 @@ Railway, Render or Fly.io all work. Vercel/Netlify do **not** (no WebSockets for
 1. Create the service from this folder (Dockerfile included), attach a volume at `/data`.
 2. Set env vars from [.env.example](./.env.example). Production refuses to run admin login without `SESSION_SECRET` and `ADMIN_PASSWORD`, and rejects unsigned Twilio webhooks.
 3. Point a domain at it (soft-launch on `new.omuriceramen.com` first; see LAUNCH.md).
-4. Back up `/data/omurice.db` daily (one file).
+4. Back up `/data` daily: `omurice.db` plus the `media/` folder of uploaded photos/videos (`MEDIA_DIR` overrides the location).
 
 ### Twilio setup (AI phone)
 
@@ -77,6 +78,11 @@ src/app/(site)/            Customer pages        src/app/admin/   Staff dashboar
 src/app/api/               JSON + Twilio webhooks
 tests/                     node:test suites (run offline)
 ```
+
+Brand: palette and fonts follow the restaurant's Instagram (black ink logo, red hanko seal, neon "OMURICE" sign on wood).
+Fonts are self-hosted via `@fontsource` (Shippori Mincho B1, Oswald, Inter). `public/brand/logo.png` is cropped from the
+Instagram profile picture; replace it with the original artwork for a crisper logo. Uploaded images are resized in the
+browser to 2000px; files are type-checked by their bytes, served with HTTP Range support (needed for Safari video).
 
 AI notes: model defaults to `claude-opus-5-5` at low effort (set `AI_MODEL` to change); server-side refusal
 fallback is enabled; the restaurant knowledge block is prompt-cached and the phone transcript is append-only and cached.
