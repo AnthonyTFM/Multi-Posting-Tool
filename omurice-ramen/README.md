@@ -19,11 +19,13 @@ Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
 ```bash
 npm install
 npm run dev            # http://localhost:3000, staff dashboard at /admin (dev password: omurice)
-npm test               # 24 unit/flow tests (no API keys needed)
+npm test               # 25 unit/flow tests (no API keys needed)
 ANTHROPIC_API_KEY=… npm run ai:check   # live AI chat + scripted phone call (in-memory DB)
 ```
 
 Node 22.13+ is required (uses the built-in `node:sqlite`; no native modules).
+`ffmpeg` should be installed (the Dockerfile does this): uploaded phone videos (iPhone HEVC `.mov`, 4K/60fps)
+are converted to H.264 MP4 ≤1920px, 30fps, plus a poster frame. Without ffmpeg, videos are stored as uploaded.
 
 ## Deploy
 
@@ -82,7 +84,10 @@ tests/                     node:test suites (run offline)
 Brand: palette and fonts follow the restaurant's Instagram (black ink logo, red hanko seal, neon "OMURICE" sign on wood).
 Fonts are self-hosted via `@fontsource` (Shippori Mincho B1, Oswald, Inter). `public/brand/logo.png` is cropped from the
 Instagram profile picture; replace it with the original artwork for a crisper logo. Uploaded images are resized in the
-browser to 2000px; files are type-checked by their bytes, served with HTTP Range support (needed for Safari video).
+browser to 2000px; uploads stream to disk (videos up to 500 MB / 3 min), are type-checked by their bytes, and are
+served with HTTP Range support (needed for Safari video). The default home hero is the restaurant's own dining-room
+clip (`public/brand/hero.mp4` + `.webm` fallback + poster), shown until another hero is picked in `/admin/media`;
+it pauses for reduced-motion/data-saver users and has a pause button.
 
 AI notes: model defaults to `claude-opus-5-5` at low effort (set `AI_MODEL` to change); server-side refusal
 fallback is enabled; the restaurant knowledge block is prompt-cached and the phone transcript is append-only and cached.

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AskButton } from "@/components/AskButton";
 import { Gallery } from "@/components/Gallery";
+import { HeroBackground } from "@/components/HeroBackground";
 import { ArrowIcon, BagIcon, ClockIcon, PhoneIcon, PinIcon, StarIcon, UsersIcon } from "@/components/icons";
 import { ItemGrid } from "@/components/MenuBrowser";
 import { InstagramIcon } from "@/components/SiteHeader";
@@ -24,26 +25,12 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero: owner's photo/video if set, otherwise the neon-on-wood dining room sign */}
+      {/* Hero: the photo/video chosen in /admin/media, else the dining-room video */}
       <section className="wood-wall relative isolate overflow-hidden text-rice">
-        {hero ? (
-          <>
-            {hero.kind === "video" ? (
-              <video src={hero.url} className="absolute inset-0 -z-10 h-full w-full object-cover" autoPlay muted loop playsInline preload="auto" aria-hidden />
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={hero.url} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover" />
-            )}
-            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/55 to-ink/10 md:bg-gradient-to-r md:from-ink/90 md:via-ink/50 md:to-transparent" />
-          </>
-        ) : (
-          <div className="pointer-events-none absolute inset-x-0 top-10 -z-10 flex flex-col items-center md:inset-x-auto md:right-[4%] md:top-1/2 md:-translate-y-1/2 md:items-end" aria-hidden>
-            <p className="neon neon-flicker text-[4.6rem] leading-none sm:text-[6rem] md:text-[8.5rem]">Omurice</p>
-            <p className="neon mt-3 text-xl tracking-[0.5em] md:text-2xl">Ramen · Boba</p>
-          </div>
-        )}
+        <HeroBackground kind={hero.kind} src={hero.url} mime={hero.mime} poster={hero.poster} webmSrc={hero.webm} />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/55 to-ink/20 md:bg-gradient-to-r md:from-ink/90 md:via-ink/55 md:to-ink/10" />
 
-        <div className={`mx-auto flex min-h-[620px] max-w-6xl flex-col justify-end px-4 pb-20 sm:px-6 md:min-h-[700px] md:justify-center md:pb-24 ${hero ? "pt-28 md:pt-24" : "pt-56 md:pt-16"}`}>
+        <div className={`mx-auto flex min-h-[620px] max-w-6xl flex-col justify-end px-4 pb-20 sm:px-6 md:min-h-[700px] md:justify-center md:pb-24 pt-28 md:pt-24`}>
           <div className="animate-rise max-w-xl">
             <div className="flex flex-wrap items-center gap-3">
               <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold backdrop-blur ${status.open ? "bg-white/10 text-neon" : "bg-white/10 text-rice/80"}`}>

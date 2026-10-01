@@ -1,11 +1,19 @@
 // Photo & video library. Files live on disk (MEDIA_DIR, next to the database on
 // the persistent volume); metadata lives in SQLite. Served by /media/[file].
+//
+// Videos are converted with ffmpeg to H.264 MP4 (+ a poster frame) so iPhone
+// HEVC .mov clips play in every browser. Without ffmpeg they're stored as-is.
 
+import { execFile } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { promisify } from "node:util";
 import { db, nowIso } from "./db.ts";
 import { getSettings, updateSettings } from "./settings.ts";
 import { randomId } from "./util.ts";
+
+const run = promisify(execFile);
 
 export type MediaKind = "image" | "video";
 export type Media = {
@@ -17,11 +25,13 @@ export type Media = {
   alt: string;
   createdAt: string;
   url: string;
+  poster: string | null; // video still frame
 };
 
-type Row = { id: string; filename: string; kind: string; mime: string; size: number; alt: string; created_at: string };
+type Row = { id: string; filename: string; kind: string; mime: string; size: number; alt: string; created_at: string; poster: string | null };
 
-const LIMITS: Record<MediaKind, number> = { image: 15 * 1024 * 1024, video: 100 * 1024 * 1024 };
+export const UPLOAD_LIMITS: Record<MediaKind, number> = { image: 15 * 1024 * 1024, video: 500 * 1024 * 1024 };
+export const MAX_VIDEO_SECONDS = 180;
 
 export function mediaDir(): string {
   if (process.env.MEDIA_DIR) return process.env.MEDIA_DIR;
@@ -29,6 +39,8 @@ export function mediaDir(): string {
   const base = dbPath && dbPath !== ":memory:" ? path.dirname(dbPath) : path.join(process.cwd(), "data");
   return path.join(base, "media");
 }
+
+const inMediaDir = (name: string) => path.join(/*turbopackIgnore: true*/ mediaDir(), name);
 
 export const FILENAME_RE = /^[A-Za-z0-9_-]+\.(jpg|png|webp|gif|mp4|webm|mov)$/;
 
@@ -75,25 +87,111 @@ function toMedia(r: Row): Media {
     alt: r.alt,
     createdAt: r.created_at,
     url: `/media/${r.filename}`,
+    poster: r.poster ? `/media/${r.poster}` : null,
   };
 }
 
-export function saveMedia(bytes: Uint8Array, alt = ""): Media {
-  const type = sniff(bytes);
+let ffmpegOk: boolean | null = null;
+export async function ffmpegAvailable(): Promise<boolean> {
+  if (ffmpegOk === null) {
+    try {
+      await run("ffmpeg", ["-version"]);
+      await run("ffprobe", ["-version"]);
+      ffmpegOk = true;
+    } catch {
+      ffmpegOk = false;
+    }
+  }
+  return ffmpegOk;
+}
+
+async function probeDuration(file: string): Promise<number> {
+  const { stdout } = await run("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]);
+  return Number.parseFloat(stdout.trim()) || 0;
+}
+
+/**
+ * Convert any phone video (HEVC .mov, 4K, 60fps, rotated) to a web-safe H.264
+ * MP4: longest edge ≤ 1920px, 30fps, AAC audio, moov atom up front.
+ */
+async function transcodeVideo(input: string, output: string, poster: string): Promise<void> {
+  await run(
+    "ffmpeg",
+    [
+      "-v", "error", "-y", "-i", input,
+      "-map", "0:v:0", "-map", "0:a:0?",
+      "-vf", "scale=w='if(gte(iw,ih),min(1920,iw),-2)':h='if(gte(iw,ih),-2,min(1920,ih))',fps=30,format=yuv420p",
+      "-c:v", "libx264", "-preset", "veryfast", "-crf", "24", "-profile:v", "high",
+      "-c:a", "aac", "-b:a", "128k",
+      "-movflags", "+faststart",
+      output,
+    ],
+    { timeout: 10 * 60 * 1000, maxBuffer: 1024 * 1024 },
+  );
+  await run("ffmpeg", ["-v", "error", "-y", "-i", output, "-frames:v", "1", "-q:v", "4", poster], { timeout: 60 * 1000 });
+}
+
+/**
+ * Validate and store an uploaded file already written to `tempPath` (the caller
+ * deletes the temp file). Photos are stored as-is; videos are converted.
+ */
+export async function ingestUpload(tempPath: string, alt = ""): Promise<Media> {
+  const head = Buffer.alloc(32);
+  const fd = fs.openSync(tempPath, "r");
+  fs.readSync(fd, head, 0, 32, 0);
+  fs.closeSync(fd);
+  const type = sniff(head);
   if (!type) {
-    throw new MediaError("Unsupported file. Use JPG, PNG, WebP or GIF photos and MP4/WebM/MOV videos. (iPhone HEIC photos: export as JPG.)");
+    throw new MediaError("Unsupported file. Use JPG, PNG, WebP or GIF photos and MP4/MOV/WebM videos. (iPhone HEIC photos: upload from the iPhone, or export as JPG.)");
   }
-  if (bytes.length > LIMITS[type.kind]) {
-    throw new MediaError(`File too large. Max ${LIMITS[type.kind] / 1024 / 1024} MB for ${type.kind}s.`);
+  const size = fs.statSync(tempPath).size;
+  if (size > UPLOAD_LIMITS[type.kind]) {
+    throw new MediaError(`File too large. Max ${UPLOAD_LIMITS[type.kind] / 1024 / 1024} MB for ${type.kind}s.`);
   }
+
   const id = randomId(10);
-  const filename = `${id}.${type.ext}`;
   fs.mkdirSync(mediaDir(), { recursive: true });
-  fs.writeFileSync(path.join(/*turbopackIgnore: true*/ mediaDir(), filename), bytes);
+  let filename = `${id}.${type.ext}`;
+  let poster: string | null = null;
+
+  if (type.kind === "video" && (await ffmpegAvailable())) {
+    let seconds: number;
+    try {
+      seconds = await probeDuration(tempPath);
+    } catch {
+      throw new MediaError("That video couldn't be read. Try exporting it again from your phone.");
+    }
+    if (seconds > MAX_VIDEO_SECONDS) throw new MediaError(`Videos must be under ${MAX_VIDEO_SECONDS / 60} minutes. Trim it on your phone first.`);
+    filename = `${id}.mp4`;
+    poster = `${id}-poster.jpg`;
+    try {
+      await transcodeVideo(tempPath, inMediaDir(filename), inMediaDir(poster));
+    } catch (e) {
+      fs.rmSync(inMediaDir(filename), { force: true });
+      fs.rmSync(inMediaDir(poster), { force: true });
+      console.error("[media] transcode failed", e);
+      throw new MediaError("That video couldn't be converted. Try a shorter clip or export it as MP4.");
+    }
+  } else {
+    fs.copyFileSync(tempPath, inMediaDir(filename));
+  }
+
+  const stored = fs.statSync(inMediaDir(filename)).size;
   db()
-    .prepare("INSERT INTO media (id, filename, kind, mime, size, alt, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
-    .run(id, filename, type.kind, MIME_BY_EXT[type.ext], bytes.length, alt.slice(0, 200), nowIso());
+    .prepare("INSERT INTO media (id, filename, kind, mime, size, alt, created_at, poster) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+    .run(id, filename, type.kind, mimeForFilename(filename), stored, alt.slice(0, 200), nowIso(), poster);
   return getMedia(id)!;
+}
+
+/** Store bytes already in memory (tests, scripts). */
+export async function saveMedia(bytes: Uint8Array, alt = ""): Promise<Media> {
+  const tmp = path.join(os.tmpdir(), `omu-${randomId()}`);
+  fs.writeFileSync(tmp, bytes);
+  try {
+    return await ingestUpload(tmp, alt);
+  } finally {
+    fs.rmSync(tmp, { force: true });
+  }
 }
 
 export function getMedia(id: string): Media | null {
@@ -121,14 +219,29 @@ export function deleteMedia(id: string): void {
   });
   db().prepare("UPDATE items SET image = NULL WHERE image = ?").run(m.url);
   db().prepare("DELETE FROM media WHERE id = ?").run(id);
-  fs.rmSync(path.join(/*turbopackIgnore: true*/ mediaDir(), m.filename), { force: true });
+  fs.rmSync(inMediaDir(m.filename), { force: true });
+  if (m.poster) fs.rmSync(inMediaDir(m.poster.replace("/media/", "")), { force: true });
 }
 
+/** The restaurant's own dining-room video, used until a hero is chosen in /admin/media. */
+export const DEFAULT_HERO: Media & { webm: string } = {
+  id: "default",
+  filename: "hero.mp4",
+  kind: "video",
+  mime: "video/mp4",
+  size: 0,
+  alt: "Our dining room: the golden tree, the bubble tea neon and the tables set for dinner",
+  createdAt: "",
+  url: "/brand/hero.mp4",
+  poster: "/brand/hero-poster.jpg",
+  webm: "/brand/hero.webm", // for browsers without H.264 (some Linux Chromium builds)
+};
+
 /** Hero + gallery for the public site, skipping anything since deleted. */
-export function siteMedia(): { hero: Media | null; gallery: Media[] } {
+export function siteMedia(): { hero: Media & { webm?: string }; gallery: Media[] } {
   const s = getSettings();
   return {
-    hero: s.heroMediaId ? getMedia(s.heroMediaId) : null,
+    hero: (s.heroMediaId ? getMedia(s.heroMediaId) : null) ?? DEFAULT_HERO,
     gallery: s.galleryIds.map(getMedia).filter((m): m is Media => !!m),
   };
 }

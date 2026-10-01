@@ -8,7 +8,7 @@ function Tile({ m }: { m: Media }) {
   if (m.kind === "video") {
     return (
       <>
-        <video src={m.url} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" muted loop playsInline autoPlay preload="metadata" aria-label={m.alt || "Video"} />
+        <video src={m.url} poster={m.poster ?? undefined} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" muted loop playsInline autoPlay preload="metadata" aria-label={m.alt || "Video"} />
         <span className="absolute right-2 top-2 rounded-full bg-ink/60 p-1.5 text-white" aria-hidden>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
         </span>
@@ -57,7 +57,7 @@ export function Gallery({ items }: { items: Media[] }) {
           <button type="button" className="absolute inset-0" onClick={() => setOpen(null)} aria-label="Close" tabIndex={-1} />
           <div className="relative max-h-full max-w-4xl">
             {current.kind === "video" ? (
-              <video key={current.id} src={current.url} className="max-h-[85dvh] max-w-full rounded-xl" controls autoPlay playsInline />
+              <video key={current.id} src={current.url} poster={current.poster ?? undefined} className="max-h-[85dvh] max-w-full rounded-xl" controls autoPlay playsInline />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={current.url} alt={current.alt} className="max-h-[85dvh] max-w-full rounded-xl object-contain" />

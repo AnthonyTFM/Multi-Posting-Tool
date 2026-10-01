@@ -106,6 +106,12 @@ CREATE TABLE IF NOT EXISTS media (
 );
 `;
 
+/** Additive column migrations for databases created by earlier versions. */
+function migrate(db: Database) {
+  const cols = (db.prepare("PRAGMA table_info(media)").all() as { name: string }[]).map((c) => c.name);
+  if (!cols.includes("poster")) db.exec("ALTER TABLE media ADD COLUMN poster TEXT");
+}
+
 function seed(db: Database) {
   const hasMenu = db.prepare("SELECT COUNT(*) AS n FROM categories").get() as { n: number };
   if (hasMenu.n === 0) {
@@ -145,6 +151,7 @@ function open(): Database {
   const db = new DatabaseSync(file);
   db.exec("PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000; PRAGMA foreign_keys = ON;");
   db.exec(SCHEMA);
+  migrate(db);
   seed(db);
   return db;
 }

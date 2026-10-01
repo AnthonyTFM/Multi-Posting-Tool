@@ -21,7 +21,7 @@ export const RESTAURANT = {
   // Defaults; editable in /admin/media.
   social: {
     instagram: "https://www.instagram.com/omurice_ramen_boba/",
-    facebook: "",
+    facebook: "https://www.facebook.com/p/Omurice-RamenBoba-61575266813808/",
     tiktok: "",
   },
   instagramHandle: "omurice_ramen_boba",

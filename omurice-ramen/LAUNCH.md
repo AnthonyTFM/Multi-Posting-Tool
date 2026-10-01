@@ -13,7 +13,7 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 | 2 | **Your Instagram photos & reels**: upload them yourself in `/admin/media` (drag & drop), or attach them in chat | Hero video, gallery and menu photos. Illustrations fill in until then | Originals from your phone/IG (Reels download as MP4). 1 hero clip 8–20 s + 6–12 gallery shots + 1 photo per top-10 dish | No (neon design works meanwhile) |
 | 2a | **Original dish photos** used on the printed menu (ask your menu designer) | Cropping them from a photo of the printed menu would look blurry | JPG/PNG originals | No |
 | 2b | **Logo file** (original PNG/SVG/AI) | The current logo is cropped from your Instagram profile picture (fine small, soft when large) | Whatever your designer delivered | No |
-| 2c | **Facebook / TikTok links** | Add to header/footer | Paste in `/admin/media` → Social links | No |
+| 2c | **TikTok handle** (Facebook is already linked) | Add to header/footer | Paste in `/admin/media` → Social links | No |
 | 3 | **2nd store line number** for "speak to a human" transfers | Transfer destination | 10-digit number. Must NOT be forwarded | **Yes** (for phone) |
 | 4 | **Twilio account** (you own it; add card) | Phone number, AI voice, texts | Account SID + Auth Token | **Yes** (for phone/texts) |
 | 5 | **Anthropic API key** (console.anthropic.com) | Powers chat + phone AI | `sk-ant-…` key | **Yes** (for AI) |

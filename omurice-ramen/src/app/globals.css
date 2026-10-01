@@ -67,30 +67,7 @@ h3,
   font-size: 0.78rem;
 }
 
-/* The dining-room neon sign */
-.neon {
-  font-family: var(--font-cond);
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-neon);
-  text-shadow:
-    0 0 2px #fff,
-    0 0 10px #9fdcff,
-    0 0 24px #4bb1ff,
-    0 0 48px #2b7fff,
-    0 0 90px #2b7fff;
-}
-.neon-flicker {
-  animation: flicker 7s infinite;
-}
-@keyframes flicker {
-  0%, 92%, 95%, 100% { opacity: 1; }
-  93% { opacity: 0.55; }
-  94% { opacity: 0.9; }
-}
-
-/* Warm wood-panel wall behind the sign */
+/* Warm wood-panel backdrop behind the hero media while it loads */
 .wood-wall {
   background:
     repeating-linear-gradient(90deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 96px),

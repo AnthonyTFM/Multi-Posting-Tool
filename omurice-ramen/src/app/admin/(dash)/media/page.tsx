@@ -6,7 +6,7 @@ import type { Media } from "@/lib/media";
 import type { Socials } from "@/lib/settings";
 
 type Library = { media: Media[]; heroMediaId: string | null; galleryIds: string[]; socials: Socials };
-type Upload = { name: string; progress: number; error?: string };
+type Upload = { name: string; progress: number; error?: string; processing?: boolean; done?: boolean };
 
 const MAX_EDGE = 2000;
 
@@ -30,12 +30,11 @@ async function prepareImage(file: File): Promise<Blob> {
 
 function uploadOne(blob: Blob, name: string, onProgress: (p: number) => void): Promise<Media> {
   return new Promise((resolve, reject) => {
-    const form = new FormData();
-    form.append("file", blob, name);
-    form.append("alt", name.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " "));
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/admin/media");
     xhr.setRequestHeader("X-Omurice-Upload", "1");
+    xhr.setRequestHeader("X-Alt", encodeURIComponent(name.replace(/\.[a-z0-9]+$/i, "").replace(/[-_]+/g, " ")));
+    xhr.setRequestHeader("Content-Type", blob.type || "application/octet-stream");
     xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total);
     xhr.onload = () => {
       const body = (() => {
@@ -50,13 +49,13 @@ function uploadOne(blob: Blob, name: string, onProgress: (p: number) => void): P
       else reject(new Error(body.error || `Upload failed (${xhr.status})`));
     };
     xhr.onerror = () => reject(new Error("Network error"));
-    xhr.send(form);
+    xhr.send(blob);
   });
 }
 
 function Preview({ m, className = "" }: { m: Media; className?: string }) {
   return m.kind === "video" ? (
-    <video src={m.url} className={`h-full w-full object-cover ${className}`} muted loop playsInline preload="metadata" onMouseEnter={(e) => void e.currentTarget.play()} onMouseLeave={(e) => e.currentTarget.pause()} />
+    <video src={m.url} poster={m.poster ?? undefined} className={`h-full w-full object-cover ${className}`} muted loop playsInline preload="metadata" onMouseEnter={(e) => void e.currentTarget.play()} onMouseLeave={(e) => e.currentTarget.pause()} />
   ) : (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={m.url} alt={m.alt} className={`h-full w-full object-cover ${className}`} loading="lazy" />
@@ -86,9 +85,10 @@ export default function MediaAdmin() {
     for (const f of list) {
       const set = (patch: Partial<Upload>) => setUploads((u) => u.map((x) => (x.name === f.name ? { ...x, ...patch } : x)));
       try {
-        const blob = f.type.startsWith("image/") ? await prepareImage(f) : f;
-        await uploadOne(blob, f.name, (p) => set({ progress: p }));
-        set({ progress: 1 });
+        const isVideo = !f.type.startsWith("image/");
+        const blob = isVideo ? f : await prepareImage(f);
+        await uploadOne(blob, f.name, (p) => set({ progress: p, processing: isVideo && p >= 1 }));
+        set({ progress: 1, processing: false, done: true });
         setTimeout(() => setUploads((u) => u.filter((x) => x.name !== f.name || x.error)), 1200);
       } catch (e) {
         set({ error: e instanceof Error ? e.message : "Upload failed" });
@@ -137,7 +137,7 @@ export default function MediaAdmin() {
         className={`mt-5 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-10 text-center transition ${drag ? "border-seal bg-seal/5" : "border-line bg-card"}`}
       >
         <p className="text-lg font-bold">Drop photos &amp; videos here</p>
-        <p className="mt-1 text-sm text-ink-3">JPG, PNG, WebP · MP4, MOV, WebM · videos up to 100 MB</p>
+        <p className="mt-1 text-sm text-ink-3">JPG, PNG, WebP · iPhone/Android videos (MOV, MP4) up to 500 MB, under 3 minutes. Videos are converted automatically.</p>
         <button type="button" onClick={() => input.current?.click()} className="mt-4 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-rice">Choose files</button>
         <input ref={input} type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm" className="hidden" onChange={(e) => e.target.files && handleFiles(e.target.files)} />
       </div>
@@ -147,7 +147,9 @@ export default function MediaAdmin() {
             <li key={u.name} className="rounded-xl bg-card px-4 py-2 text-sm">
               <div className="flex justify-between gap-3">
                 <span className="truncate">{u.name}</span>
-                <span className={u.error ? "text-seal" : "text-ink-3"}>{u.error ?? `${Math.round(u.progress * 100)}%`}</span>
+                <span className={u.error ? "text-seal" : "text-ink-3"}>
+                  {u.error ?? (u.progress >= 1 && u.processing ? "Converting video…" : u.done ? "Done ✓" : `${Math.round(u.progress * 100)}%`)}
+                </span>
               </div>
               {!u.error && <div className="mt-1 h-1 rounded bg-line"><div className="h-1 rounded bg-seal transition-all" style={{ width: `${u.progress * 100}%` }} /></div>}
             </li>
@@ -160,7 +162,8 @@ export default function MediaAdmin() {
         <ul className="mt-2 list-disc space-y-1 pl-5 text-ink-2">
           <li><strong>Hero video:</strong> 8–20 second clip (broth pour, omurice fold, the neon sign), landscape or square, under 40 MB. It plays muted on a loop.</li>
           <li><strong>From Instagram:</strong> open the post → ••• → Download (or save your original from Photos). Reels download as MP4.</li>
-          <li><strong>iPhone:</strong> photos saved as HEIC won&apos;t upload from a computer. Upload from the iPhone itself (it converts automatically) or set Settings → Camera → Formats → Most Compatible.</li>
+          <li><strong>iPhone videos:</strong> upload straight from your camera roll. 4K/HEVC clips are converted to a web-friendly MP4 automatically (takes a minute for long clips).</li>
+          <li><strong>iPhone photos:</strong> HEIC photos won&apos;t upload from a computer. Upload from the iPhone itself (it converts automatically) or set Settings → Camera → Formats → Most Compatible.</li>
           <li><strong>Menu photos:</strong> one dish per photo, shot from above or at 45°, natural light.</li>
         </ul>
       </details>
@@ -169,9 +172,17 @@ export default function MediaAdmin() {
         <h2 className="text-xl font-bold">Home page hero</h2>
         <div className="mt-3 flex flex-wrap items-center gap-4">
           <div className="h-28 w-48 overflow-hidden rounded-xl bg-ink">
-            {lib.heroMediaId && byId.get(lib.heroMediaId) ? <Preview m={byId.get(lib.heroMediaId)!} /> : <p className="flex h-full items-center justify-center text-xs text-rice/60">Neon sign design (default)</p>}
+            {lib.heroMediaId && byId.get(lib.heroMediaId) ? (
+              <Preview m={byId.get(lib.heroMediaId)!} />
+            ) : (
+              <video src="/brand/hero.mp4" poster="/brand/hero-poster.jpg" className="h-full w-full object-cover" muted loop playsInline autoPlay />
+            )}
           </div>
-          {lib.heroMediaId && <button type="button" onClick={() => patchSettings({ heroMediaId: null })} className="text-sm font-semibold text-seal underline">Use default neon design</button>}
+          {lib.heroMediaId ? (
+            <button type="button" onClick={() => patchSettings({ heroMediaId: null })} className="text-sm font-semibold text-seal underline">Use the default dining-room video</button>
+          ) : (
+            <p className="text-sm text-ink-3">Showing your dining-room video (default). Pick any photo or video below with “Set hero”.</p>
+          )}
         </div>
       </section>
 
