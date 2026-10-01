@@ -1,16 +1,27 @@
 import { SettingsPanel } from "@/components/admin/SettingsPanel";
 import { aiConfigured, MODEL } from "@/lib/ai/client";
 import { posProvider } from "@/lib/pos";
+import { getGoogleReviews, reviewsConfigured } from "@/lib/reviews";
 import { smsEnabled } from "@/lib/twilio";
 import { staffNumber } from "@/lib/voice/twiml";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const google = await getGoogleReviews();
   const base = process.env.PUBLIC_BASE_URL || "https://YOUR-DOMAIN";
   const status = [
     { label: "AI (chat + phone)", ok: aiConfigured(), detail: aiConfigured() ? `Model ${MODEL}` : "Set ANTHROPIC_API_KEY" },
     { label: "Twilio phone webhooks", ok: !!process.env.TWILIO_AUTH_TOKEN, detail: `Voice webhook: ${base}/api/voice/incoming` },
     { label: "Transfer line (human)", ok: !!staffNumber(), detail: staffNumber() ?? "Set STAFF_TRANSFER_NUMBER (2nd store line)" },
     { label: "Text messages", ok: smsEnabled(), detail: smsEnabled() ? "Confirmations + ready alerts on" : "Set TWILIO_SMS_FROM to text customers" },
+    {
+      label: "Google reviews",
+      ok: !!google,
+      detail: !reviewsConfigured()
+        ? "Set GOOGLE_MAPS_API_KEY to show live reviews on the home page"
+        : google
+          ? `Live: ${google.rating.toFixed(1)}★ from ${google.count} reviews, ${google.reviews.length} shown in the carousel`
+          : "Key set but Google didn't answer yet. Check the key's Places API (New) access and billing",
+    },
     {
       label: "Honor POS sync",
       ok: posProvider() !== "none",

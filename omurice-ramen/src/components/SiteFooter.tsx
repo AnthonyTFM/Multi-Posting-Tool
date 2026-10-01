@@ -5,7 +5,7 @@ import type { Socials } from "@/lib/settings";
 import { StarIcon } from "./icons";
 import { InstagramIcon, Logo } from "./SiteHeader";
 
-export function SiteFooter({ socials }: { socials: Socials }) {
+export function SiteFooter({ socials, rating }: { socials: Socials; rating: { stars: number; count: number } }) {
   return (
     <footer className="mt-24 bg-ink text-rice">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
@@ -13,7 +13,7 @@ export function SiteFooter({ socials }: { socials: Socials }) {
           <Logo light />
           <p className="mt-4 max-w-xs text-sm text-rice/70">{RESTAURANT.tagline}.</p>
           <p className="mt-4 flex items-center gap-1.5 text-sm text-yolk-2">
-            <StarIcon width={16} height={16} /> {RESTAURANT.rating.stars} from {RESTAURANT.rating.count}+ reviews
+            <StarIcon width={16} height={16} /> {rating.stars.toFixed(1)} from {rating.count.toLocaleString()} Google reviews
           </p>
           <div className="mt-5 flex flex-wrap gap-2 text-sm">
             {socials.instagram && (

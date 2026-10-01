@@ -10,6 +10,7 @@ One Node.js app that runs everything:
 | AI chat | widget on every page | Answers FAQ/menu/hours/allergen questions (Claude) |
 | AI phone host | Twilio → `/api/voice/incoming` + `wss://…/voice/relay` | Takes pickup orders, books 6+ tables, answers questions, transfers to the 2nd store line on request (or press 0) |
 | Kitchen & admin | `/admin` | Live order board (chime, print tickets), reservations, menu editor (sold-out, prices, POS PLUs), AI call transcripts, settings, FAQ |
+| Google reviews | home page | Live Google rating + rotating, shuffled reviews (Places API, server-side, cached) with "Write a review" link |
 | Photos & video | `/admin/media` | Upload Instagram photos/reels; pick the home hero (photo or looping video), the "From our kitchen" gallery, menu-item photos, social links |
 
 Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
@@ -19,7 +20,7 @@ Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
 ```bash
 npm install
 npm run dev            # http://localhost:3000, staff dashboard at /admin (dev password: omurice)
-npm test               # 25 unit/flow tests (no API keys needed)
+npm test               # 28 unit/flow tests (no API keys needed)
 ANTHROPIC_API_KEY=… npm run ai:check   # live AI chat + scripted phone call (in-memory DB)
 ```
 
@@ -56,6 +57,15 @@ AI session ends ─► /api/voice/after ─► transfer: <Dial> staff line ─(n
 ```
 
 Kill switch: **/admin/settings → AI phone host OFF** makes every call ring the staff line directly.
+
+### Google reviews
+
+1. In Google Cloud: create a project, attach billing, enable **Places API (New)**.
+2. Create an API key and restrict it to *Places API (New)* (server key; it never reaches browsers).
+3. Set `GOOGLE_MAPS_API_KEY`. The place is found automatically from the address (or set `GOOGLE_PLACE_ID`).
+Google returns up to 5 "most relevant" reviews; the carousel shows those rated ≥4★ (`GOOGLE_REVIEWS_MIN_RATING`)
+next to the true overall rating and count. Refreshed hourly (`GOOGLE_REVIEWS_TTL_MIN`), about 720 calls/month.
+Until a key is set, the section links to the Google listing; reviews are never invented.
 
 ### Honor POS (phase 2)
 

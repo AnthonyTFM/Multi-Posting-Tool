@@ -4,16 +4,20 @@ import { Gallery } from "@/components/Gallery";
 import { HeroBackground } from "@/components/HeroBackground";
 import { ArrowIcon, BagIcon, ClockIcon, PhoneIcon, PinIcon, StarIcon, UsersIcon } from "@/components/icons";
 import { ItemGrid } from "@/components/MenuBrowser";
+import { ReviewsCarousel, Stars } from "@/components/ReviewsCarousel";
 import { InstagramIcon } from "@/components/SiteHeader";
 import { listFaqs } from "@/lib/faq";
 import { hoursSummary, openStatus } from "@/lib/hours";
 import { siteMedia } from "@/lib/media";
 import { getMenu } from "@/lib/menu";
+import { getGoogleReviews } from "@/lib/reviews";
 import { FULL_ADDRESS, RESTAURANT } from "@/lib/restaurant";
 import { getSettings } from "@/lib/settings";
 
-export default function HomePage() {
+export default async function HomePage() {
   const settings = getSettings();
+  const google = await getGoogleReviews();
+  const rating = google ? { stars: google.rating, count: google.count } : RESTAURANT.rating;
   const status = openStatus(new Date(), settings.closures);
   const { hero, gallery } = siteMedia();
   const menu = getMenu();
@@ -59,7 +63,7 @@ export default function HomePage() {
               <div className="flex items-center gap-1.5">
                 <StarIcon width={16} height={16} className="text-yolk" />
                 <dt className="sr-only">Rating</dt>
-                <dd><strong className="text-rice">{RESTAURANT.rating.stars}</strong> · {RESTAURANT.rating.count}+ reviews</dd>
+                <dd><strong className="text-rice">{rating.stars.toFixed(1)}</strong> · {rating.count.toLocaleString()}{google ? "" : "+"} Google reviews</dd>
               </div>
               <div className="flex items-center gap-1.5">
                 <ClockIcon width={16} height={16} />
@@ -82,7 +86,7 @@ export default function HomePage() {
           <Link href="/menu" className="group rounded-2xl border border-line bg-card p-6 shadow-lift transition hover:-translate-y-0.5">
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-seal text-white"><BagIcon /></span>
             <h2 className="mt-4 text-xl font-bold">Order online</h2>
-            <p className="mt-1 text-sm leading-6 text-ink-3">Customize spice, toppings and sweetness. Pick ASAP or a later time. Pay when you arrive.</p>
+            <p className="mt-1 text-sm leading-6 text-ink-3">Pick your sauce, toppings and extras. Choose ASAP or a later time. Pay when you arrive.</p>
             <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-seal">Start an order <ArrowIcon width={16} height={16} className="transition group-hover:translate-x-0.5" /></span>
           </Link>
           <a href={`tel:${RESTAURANT.phoneE164}`} className="group rounded-2xl border border-line bg-card p-6 shadow-lift transition hover:-translate-y-0.5">
@@ -97,6 +101,53 @@ export default function HomePage() {
             <p className="mt-1 text-sm leading-6 text-ink-3">We reserve tables for parties of 6 to 20. Birthdays, team lunches, family night. Smaller groups walk right in.</p>
             <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-seal">Book a table <ArrowIcon width={16} height={16} className="transition group-hover:translate-x-0.5" /></span>
           </Link>
+        </div>
+      </section>
+
+      {/* Google reviews, rotating */}
+      <section className="mx-auto mt-20 max-w-6xl px-4 sm:px-6" aria-labelledby="reviews-heading">
+        <div className="grid gap-8 lg:grid-cols-[300px_1fr] lg:items-start">
+          <div>
+            <p className="eyebrow text-seal">Google reviews</p>
+            <h2 id="reviews-heading" className="mt-2 text-4xl font-extrabold">What guests are saying</h2>
+            <div className="mt-6 flex items-end gap-3">
+              <span className="font-display text-6xl font-extrabold leading-none">{rating.stars.toFixed(1)}</span>
+              <span className="pb-1">
+                <Stars value={rating.stars} size={22} />
+                <span className="block text-sm text-ink-3">{rating.count.toLocaleString()}{google ? "" : "+"} reviews on Google</span>
+              </span>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <a href={google?.placeUrl ?? RESTAURANT.mapsUrl} target="_blank" rel="noopener" className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-rice hover:bg-ink-2">
+                Read all reviews
+              </a>
+              {google && (
+                <a href={google.writeReviewUrl} target="_blank" rel="noopener" className="rounded-full px-5 py-2.5 text-sm font-semibold ring-1 ring-line hover:ring-ink">
+                  Write a review
+                </a>
+              )}
+            </div>
+            <p className="mt-5 text-xs text-[#5e5e5e]" translate="no" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+              Google Maps
+            </p>
+          </div>
+          {google && google.reviews.length > 0 ? (
+            <ReviewsCarousel reviews={google.reviews} />
+          ) : (
+            <a
+              href={RESTAURANT.mapsUrl}
+              target="_blank"
+              rel="noopener"
+              className="group flex min-h-[220px] flex-col justify-center rounded-3xl border border-line bg-card p-8 shadow-soft transition hover:shadow-lift"
+            >
+              <Stars value={rating.stars} size={26} />
+              <span className="mt-4 block font-display text-3xl font-extrabold">Rated {rating.stars.toFixed(1)} by Battle Creek</span>
+              <span className="mt-2 block text-ink-3">Read what {rating.count.toLocaleString()}+ guests say about our ramen, omurice and boba on Google.</span>
+              <span className="mt-4 inline-flex items-center gap-1 font-semibold text-seal">
+                See reviews on Google <ArrowIcon width={18} height={18} className="transition group-hover:translate-x-0.5" />
+              </span>
+            </a>
+          )}
         </div>
       </section>
 

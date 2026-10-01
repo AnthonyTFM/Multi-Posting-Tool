@@ -13,6 +13,7 @@ export type Settings = {
   heroMediaId: string | null; // home page hero photo or looping video
   galleryIds: string[]; // home page "From our kitchen" grid, in order
   socials: Socials;
+  googlePlaceId: string; // looked up once from Google, then remembered
 };
 
 const DEFAULTS: Settings = {
@@ -25,6 +26,7 @@ const DEFAULTS: Settings = {
   heroMediaId: null,
   galleryIds: [],
   socials: { ...RESTAURANT.social },
+  googlePlaceId: "",
 };
 
 export function getSettings(): Settings {

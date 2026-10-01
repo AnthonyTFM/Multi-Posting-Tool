@@ -4,12 +4,14 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { RESTAURANT } from "@/lib/restaurant";
+import { ratingSummary } from "@/lib/reviews";
 import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const settings = getSettings();
+  const rating = await ratingSummary();
   const banner = settings.orderingPaused
     ? `Online ordering is paused right now. Call ${RESTAURANT.phoneDisplay} and we'll take care of you.`
     : settings.announcement;
@@ -36,7 +38,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       { "@type": "OpeningHoursSpecification", dayOfWeek: "Sunday", opens: "12:00", closes: "21:30" },
     ],
     sameAs: Object.values(settings.socials).filter(Boolean),
-    aggregateRating: { "@type": "AggregateRating", ratingValue: RESTAURANT.rating.stars, reviewCount: RESTAURANT.rating.count },
   };
 
   return (
@@ -49,7 +50,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       )}
       <SiteHeader phoneDisplay={RESTAURANT.phoneDisplay} phoneE164={RESTAURANT.phoneE164} instagramUrl={settings.socials.instagram} />
       <main>{children}</main>
-      <SiteFooter socials={settings.socials} />
+      <SiteFooter socials={settings.socials} rating={rating} />
       <CartDrawer />
       <ChatWidget />
     </CartProvider>

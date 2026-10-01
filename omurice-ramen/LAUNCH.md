@@ -17,6 +17,7 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 | 3 | **2nd store line number** for "speak to a human" transfers | Transfer destination | 10-digit number. Must NOT be forwarded | **Yes** (for phone) |
 | 4 | **Twilio account** (you own it; add card) | Phone number, AI voice, texts | Account SID + Auth Token | **Yes** (for phone/texts) |
 | 5 | **Anthropic API key** (console.anthropic.com) | Powers chat + phone AI | `sk-ant-…` key | **Yes** (for AI) |
+| 5b | **Google Cloud API key** for live reviews (Places API (New), billing on) | Powers the rotating Google reviews on the home page | Key, or invite me to the project | No (links to Google until then) |
 | 6 | **Hosting account** (Railway or Render) | Runs the site 24/7 | Invite me or share deploy access | **Yes** |
 | 7 | Domain/DNS login for omuriceramen.com | Point domain at the new site | Registrar login or DNS access | Yes (for cutover) |
 | 8 | **Deliverect** account (phase 2) | Push web/phone orders into Honor POS | Ask Honor POS support to enable the Deliverect integration | No (phase 2) |
@@ -59,6 +60,7 @@ Assumes 600 calls/month at 3 minutes average, 25% transferred, 1,000 texts, 300 
 | Texts + 10DLC fees | ~$15–$25 | One-time ~$20 registration |
 | Claude AI (phone + chat) | ~$30–$90 | ≈ $0.05–$0.15/call on Opus 5.5 with caching; switching `AI_MODEL=claude-haiku-4-5` cuts this roughly 4× (your call) |
 | **Total** | **≈ $160–$300** | vs. ~30 staff-hours/month on the phone (~$450 at $15/hr) + every missed call captured |
+| Google Places API (reviews) | ~$0–$25 | ~720 calls/month at hourly refresh; Google's monthly free usage likely covers it (verify current pricing) |
 | Deliverect (phase 2) | ~$60–$150 | Quote from Deliverect |
 
 ---
@@ -129,6 +131,7 @@ AI phone orders are tagged **AI phone**; web orders **Web**. Every order is **pa
 | Bot disclosure | Greeting says "I'm the restaurant's virtual assistant" | Keep that line |
 | Prank / unpaid orders | Max $250 unpaid, 3 open orders per phone/IP per 30 min, rate limits | Call back suspicious big orders |
 | Texts without consent (TCPA/10DLC) | Opt-in language at checkout + reservations; texts are transactional only | Don't send marketing texts from this number |
+| Google reviews display | Author names/photos link to Google, "Google Maps" attribution, true average + count always shown, text never edited, ratings not marked up as our own structured data | Don't copy reviews into the page by hand |
 | "Pay less" claim | Copy says delivery apps list higher prices (true today: $16.99 direct vs $20.39 on DoorDash for Classic Tonkotsu) | Re-check if DoorDash prices change |
 | Call transcripts stored | Kept in your database only; no audio recorded | Add a privacy-policy line if you want |
 | AI outage | Any AI error transfers the caller to staff; kill switch in settings | None |
