@@ -21,7 +21,9 @@ export const metadata: Metadata = {
     type: "website",
     siteName: RESTAURANT.name,
     locale: "en_US",
+    images: [{ url: "/brand/og.jpg", width: 1200, height: 630, alt: "Omurice Ramen in Battle Creek, MI" }],
   },
+  twitter: { card: "summary_large_image", images: ["/brand/og.jpg"] },
   icons: { icon: "/brand/logo.png", apple: "/brand/logo.png" },
 };
 

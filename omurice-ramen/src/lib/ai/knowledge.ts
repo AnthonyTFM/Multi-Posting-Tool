@@ -5,6 +5,7 @@ import { faqsForPrompt } from "../faq.ts";
 import { formatDateLocal, hoursSummary, openStatus, pickupSlots, zonedParts, formatClock } from "../hours.ts";
 import { menuForPrompt } from "../menu.ts";
 import { FULL_ADDRESS, RESTAURANT } from "../restaurant.ts";
+import { CONSUMER_ADVISORY } from "../seed-data.ts";
 import { getSettings } from "../settings.ts";
 
 export function restaurantKnowledge(): string {
@@ -35,7 +36,10 @@ Online/phone orders close ${R.ordering.lastOrderBeforeCloseMin} minutes before c
 - Book up to ${R.reservations.maxDaysAhead} days ahead, at least ${R.reservations.minLeadMinutes / 60} hours in advance, last seating ${R.reservations.lastSeatingBeforeCloseMin} minutes before closing.
 - Website booking page: /reservations
 
-## Menu (item ids in brackets; prices before tax)
+## Food safety
+${CONSUMER_ADVISORY} Marinated eggs in ramen are soft-boiled.
+
+## Menu (item ids in brackets; {tags}; prices before tax)
 ${menuForPrompt()}
 
 ## FAQ

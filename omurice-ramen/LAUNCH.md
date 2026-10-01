@@ -9,8 +9,9 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 
 | # | Item | Why | Format | Blocks launch? |
 |---|---|---|---|---|
-| 1 | **Menu check**: confirm prices/descriptions of the 25 items flagged "Verify" in `/admin/menu`, plus anything missing (Ramen Combos, desserts, sodas) | Only ~8 prices were confirmable from public sources. The rest are estimates or placeholders | Photo of the printed menu or Honor POS item export | **Yes** |
+| 1 | ✅ **Menu loaded** from the printed menu (58 items, combos, extras, toppings). Still confirm: sugar/ice levels for boba (not on the printed menu, so not offered online), Ramune flavors, payment types and parking in the FAQ | The AI only answers from what's approved | Reply in chat or edit in `/admin` | Before launch |
 | 2 | **Your Instagram photos & reels**: upload them yourself in `/admin/media` (drag & drop), or attach them in chat | Hero video, gallery and menu photos. Illustrations fill in until then | Originals from your phone/IG (Reels download as MP4). 1 hero clip 8–20 s + 6–12 gallery shots + 1 photo per top-10 dish | No (neon design works meanwhile) |
+| 2a | **Original dish photos** used on the printed menu (ask your menu designer) | Cropping them from a photo of the printed menu would look blurry | JPG/PNG originals | No |
 | 2b | **Logo file** (original PNG/SVG/AI) | The current logo is cropped from your Instagram profile picture (fine small, soft when large) | Whatever your designer delivered | No |
 | 2c | **Facebook / TikTok links** | Add to header/footer | Paste in `/admin/media` → Social links | No |
 | 3 | **2nd store line number** for "speak to a human" transfers | Transfer destination | 10-digit number. Must NOT be forwarded | **Yes** (for phone) |
@@ -27,7 +28,7 @@ To go live you need about 5 accounts/inputs (below), roughly 2 weeks of setup, a
 
 | When | Task | Owner | Done when |
 |---|---|---|---|
-| Day 1 | Verify menu + FAQ in `/admin`; upload photos/reels in `/admin/media`, set hero + gallery + dish photos | You | Zero "Verify" badges; hero set |
+| Day 1 | Review FAQ in `/admin/settings`; upload photos/reels in `/admin/media`, set hero + gallery + dish photos | You | FAQ approved; hero set |
 | Day 1 | Create Twilio + Anthropic + Railway/Render accounts | You | Keys in hand |
 | Day 2 | Deploy to `new.omuriceramen.com`, set env vars, run `npm run ai:check` | Dev | Site loads; AI check passes |
 | Day 2 | Buy Twilio 269 number, point webhook, set transfer line | Dev | Test call: order placed, transfer rings 2nd line |
@@ -135,7 +136,7 @@ AI phone orders are tagged **AI phone**; web orders **Web**. Every order is **pa
 ---
 
 ## QA checklist (before cutover)
-- [ ] Zero "Verify" items in `/admin/menu`; FAQ reviewed
+- [ ] Menu spot-checked against the printed menu; FAQ reviewed
 - [ ] 20 test web orders: options, notes, scheduled times, status texts
 - [ ] 20 test calls: order, reservation (6+ and <6), transfer ("team member" and pressing 0), closed-hours order, sold-out item
 - [ ] Transfer rings the 2nd line; no-answer returns caller to the AI

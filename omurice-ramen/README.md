@@ -19,7 +19,7 @@ Owner launch plan, costs and SOPs: **[LAUNCH.md](./LAUNCH.md)**.
 ```bash
 npm install
 npm run dev            # http://localhost:3000, staff dashboard at /admin (dev password: omurice)
-npm test               # 23 unit/flow tests (no API keys needed)
+npm test               # 24 unit/flow tests (no API keys needed)
 ANTHROPIC_API_KEY=… npm run ai:check   # live AI chat + scripted phone call (in-memory DB)
 ```
 
@@ -69,7 +69,7 @@ To connect: sign up for Deliverect (Honor POS integration), ask them to register
 ```
 server.ts                  Next.js + WebSocket server (single process)
 src/lib/restaurant.ts      Address, phone, hours, reservation/ordering rules  ← edit facts here
-src/lib/seed-data.ts       First-run menu + FAQ (then edited in /admin)
+src/lib/seed-data.ts       First-run menu (from the printed menu) + FAQ; then edited in /admin
 src/lib/{menu,orders,reservations,hours,settings,faq,calls}.ts   domain logic (SQLite)
 src/lib/ai/                Claude: shared knowledge prompt, website chat, phone agent + tools
 src/lib/voice/             Twilio ConversationRelay session, TwiML, signed relay tokens

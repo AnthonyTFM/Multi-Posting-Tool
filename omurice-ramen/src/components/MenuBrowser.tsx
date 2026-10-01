@@ -9,6 +9,13 @@ import { ItemVisual } from "./ItemArt";
 
 type Selected = { item: MenuItem; art: Art } | null;
 
+const DIET_BADGES = [
+  { tag: "vegan", label: "Vegan" },
+  { tag: "vegetarian", label: "Vegetarian" },
+  { tag: "gluten-free-friendly", label: "GF friendly" },
+  { tag: "caffeine-free", label: "Caffeine-free" },
+];
+
 export function ItemCard({ item, art, onSelect, orderingOpen }: { item: MenuItem; art: Art; onSelect: () => void; orderingOpen: boolean }) {
   const disabled = item.soldOut || !orderingOpen;
   return (
@@ -26,6 +33,9 @@ export function ItemCard({ item, art, onSelect, orderingOpen }: { item: MenuItem
             <span className="rounded-full bg-yolk-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink">Popular</span>
           )}
           {item.tags.includes("spicy") && <span className="text-xs" title="Spicy" aria-label="Spicy">🌶️</span>}
+          {DIET_BADGES.filter((b) => item.tags.includes(b.tag)).map((b) => (
+            <span key={b.tag} className="rounded-full bg-matcha/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#3f6a24]">{b.label}</span>
+          ))}
           {item.soldOut && <span className="rounded-full bg-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-rice">Sold out</span>}
         </div>
         {item.description && <p className="mt-1 line-clamp-2 text-sm leading-5 text-ink-3">{item.description}</p>}

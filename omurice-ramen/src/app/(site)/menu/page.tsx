@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MenuBrowser } from "@/components/MenuBrowser";
 import { openStatus } from "@/lib/hours";
 import { getMenu } from "@/lib/menu";
+import { CONSUMER_ADVISORY } from "@/lib/seed-data";
 import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
@@ -27,6 +28,9 @@ export default function MenuPage() {
       <div className="mt-6">
         <MenuBrowser menu={getMenu()} orderingOpen={!settings.orderingPaused} />
       </div>
+      <p className="mt-14 rounded-2xl border border-line bg-card px-5 py-4 text-sm leading-6 text-ink-2">
+        <strong className="text-seal">Allergy notice:</strong> {CONSUMER_ADVISORY}
+      </p>
     </div>
   );
 }

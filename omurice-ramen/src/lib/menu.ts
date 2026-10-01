@@ -174,7 +174,10 @@ export function menuForPrompt(): string {
     out.push(`## ${cat.name}${cat.description ? ` — ${cat.description}` : ""}`);
     for (const it of cat.items) {
       const price = `$${(it.priceCents / 100).toFixed(2)}`;
-      out.push(`- [${it.id}] ${it.name} ${price}${it.soldOut ? " (SOLD OUT today)" : ""}${it.description ? `: ${it.description}` : ""}`);
+      const tags = it.tags.filter((t) => !["pork", "chicken", "beef"].includes(t));
+      out.push(
+        `- [${it.id}] ${it.name} ${price}${it.soldOut ? " (SOLD OUT today)" : ""}${tags.length ? ` {${tags.join(", ")}}` : ""}${it.description ? `: ${it.description}` : ""}`,
+      );
       for (const g of it.optionGroups) {
         const rule = g.min >= 1 ? (g.max === 1 ? "required, pick 1" : `required, pick ${g.min}-${g.max}`) : `optional, up to ${g.max}`;
         const choices = g.choices

@@ -184,6 +184,9 @@ export function CheckoutForm() {
         <p className="mt-2 text-center text-[11px] leading-4 text-ink-3">
           By placing an order you agree to receive order-status texts at this number. Msg &amp; data rates may apply. Reply STOP to opt out.
         </p>
+        <p className="mt-2 text-center text-[11px] leading-4 text-ink-3">
+          Allergies? Add them in the notes. Consuming raw or undercooked meats, poultry, seafood, shellfish or eggs may increase your risk of foodborne illness.
+        </p>
       </aside>
     </form>
   );

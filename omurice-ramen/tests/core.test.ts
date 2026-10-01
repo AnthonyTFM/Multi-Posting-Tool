@@ -3,7 +3,7 @@ process.env.DATABASE_PATH = ":memory:";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { isOpenAt, openStatus, pickupSlots, zonedParts, zonedToUtc } from "../src/lib/hours.ts";
-import { CartError, menuForPrompt, priceCart, updateItem } from "../src/lib/menu.ts";
+import { CartError, getMenu, menuForPrompt, priceCart, updateItem } from "../src/lib/menu.ts";
 import { createOrder, getOrder, quoteOrder, updateOrderStatus } from "../src/lib/orders.ts";
 import { availability, createReservation, ReservationError } from "../src/lib/reservations.ts";
 import { updateSettings } from "../src/lib/settings.ts";
@@ -41,12 +41,15 @@ test("pickup slots offer ASAP while open and scheduled slots", () => {
 
 test("cart pricing validates options server-side", () => {
   const q = priceCart([
-    { itemId: "classic-tonkotsu", quantity: 2, options: { "ramen-addons": ["egg", "chashu"] } },
-    { itemId: "classic-milk-tea", quantity: 1, options: { sugar: ["50"], ice: ["less"], toppings: ["tapioca"] } },
+    { itemId: "classic-tonkotsu", quantity: 2, options: { "ramen-addons": ["egg", "chashu-pork"], "extra-veg": ["corn"] } },
+    { itemId: "brown-sugar-boba-fresh-milk", quantity: 1, options: { milk: ["oat"], toppings: ["lychee-jelly"] } },
   ]);
-  assert.equal(q.lines[0].unitPriceCents, 1699 + 150 + 300);
-  assert.equal(q.subtotalCents, (1699 + 450) * 2 + 599 + 75);
-  assert.throws(() => priceCart([{ itemId: "classic-milk-tea", quantity: 1 }]), CartError); // sugar required
+  assert.equal(q.lines[0].unitPriceCents, 1699 + 325 + 399 + 150); // real menu: egg 3.25, chashu 3.99, veg 1.50
+  assert.equal(q.subtotalCents, (1699 + 325 + 399 + 150) * 2 + 775 + 99 + 99);
+  assert.throws(() => priceCart([{ itemId: "brown-sugar-boba-fresh-milk", quantity: 1 }]), CartError); // milk choice required
+  assert.throws(() => priceCart([{ itemId: "classic-omurice", quantity: 1, options: { rice: ["white"] } }]), /sauce/);
+  assert.equal(priceCart([{ itemId: "tokyo-shoyu", quantity: 1, options: { topping: ["katsu"] } }]).subtotalCents, 1899); // $16.99 + katsu $2 = menu's $18.99
+  assert.equal(priceCart([{ itemId: "omurice-bao", quantity: 1, options: { size: ["2pc"], filling: ["pork"] } }]).subtotalCents, 899);
   assert.throws(() => priceCart([{ itemId: "nope", quantity: 1 }]), CartError);
   assert.throws(
     () => priceCart([{ itemId: "classic-tonkotsu", quantity: 1, options: { "ramen-addons": ["gold-flakes"] } }]),
@@ -54,6 +57,22 @@ test("cart pricing validates options server-side", () => {
   );
   const total = quoteOrder([{ itemId: "popcorn-chicken", quantity: 1 }]);
   assert.equal(total.taxCents, Math.round(849 * 0.06));
+});
+
+test("menu matches the printed menu", () => {
+  const items = getMenu().categories.flatMap((c) => c.items);
+  assert.ok(items.length >= 50, `only ${items.length} items`);
+  assert.ok(items.every((i) => i.verified));
+  const price = (id: string) => items.find((i) => i.id === id)?.priceCents;
+  assert.equal(price("classic-omurice"), 1799);
+  assert.equal(price("katsu-omurice"), 1999);
+  assert.equal(price("osaka-shrimp"), 1999);
+  assert.equal(price("vegetable-ramen"), 1599);
+  assert.equal(price("ramen-crush-combo"), 2899);
+  assert.equal(price("strawberry-fruit-tea"), 626);
+  assert.equal(price("brown-sugar-boba-coffee"), 795);
+  assert.equal(price("teppanyaki-squid"), 1350);
+  assert.equal(price("ramune"), 450);
 });
 
 test("sold-out items are rejected and flagged for the AI", () => {

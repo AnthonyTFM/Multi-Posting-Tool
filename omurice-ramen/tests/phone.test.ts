@@ -30,7 +30,8 @@ function ctx(over: Partial<ToolContext> = {}) {
   return { c, events };
 }
 
-const RAMEN = { item_id: "spicy-tonkotsu", quantity: 2, options: [{ group_id: "spice", choice_ids: ["medium"] }, { group_id: "ramen-addons", choice_ids: ["egg"] }], notes: "" };
+const RAMEN = { item_id: "spicy-tonkotsu", quantity: 2, options: [{ group_id: "ramen-addons", choice_ids: ["egg"] }], notes: "" };
+const OMURICE = { item_id: "classic-omurice", quantity: 1, options: [{ group_id: "rice", choice_ids: ["chicken-fried"] }], notes: "" };
 
 test("tool schemas are strict and closed", () => {
   for (const t of PHONE_TOOLS) {
@@ -43,11 +44,11 @@ test("quote_order prices and explains errors in plain English", () => {
   const { c } = ctx();
   const ok = runPhoneTool("quote_order", { items: [RAMEN] }, c);
   assert.equal(ok.isError, undefined);
-  assert.match(ok.content, /2 x Spicy Tonkotsu Ramen \(Medium, Marinated soft egg\) = \$38\.98/);
-  assert.match(ok.content, /total \$41\.32/);
-  const missing = runPhoneTool("quote_order", { items: [{ ...RAMEN, options: [] }] }, c);
+  assert.match(ok.content, /2 x Spicy Tonkotsu Ramen \(Soft-boiled egg\) = \$42\.48/);
+  assert.match(ok.content, /total \$45\.03/);
+  const missing = runPhoneTool("quote_order", { items: [OMURICE] }, c);
   assert.equal(missing.isError, true);
-  assert.match(missing.content, /choose spice level/);
+  assert.match(missing.content, /choose sauce for Classic Omurice/);
   const bad = runPhoneTool("quote_order", { items: "nope" }, c);
   assert.equal(bad.isError, true);
 });

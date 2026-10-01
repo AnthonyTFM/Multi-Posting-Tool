@@ -210,15 +210,31 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="min-h-[320px] overflow-hidden rounded-[2rem] border border-line bg-rice-2 shadow-soft">
-          <iframe
-            title={`Map to ${FULL_ADDRESS}`}
-            src={`https://www.google.com/maps?q=${encodeURIComponent(FULL_ADDRESS)}&output=embed`}
-            className="h-full min-h-[320px] w-full border-0"
+        <a
+          href={RESTAURANT.mapsUrl}
+          target="_blank"
+          rel="noopener"
+          className="group relative min-h-[340px] overflow-hidden rounded-[2rem] border border-line bg-ink shadow-soft"
+          aria-label={`Get directions to ${FULL_ADDRESS}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/interior.jpg"
+            alt="The glowing Omurice Ramen sign above our counter, with hanging plants and booth seating"
+            className="absolute inset-0 h-full w-full object-cover object-[70%_45%] transition duration-700 group-hover:scale-105"
             loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
           />
-        </div>
+          <span className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
+          <span className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-6 text-rice">
+            <span>
+              <span className="eyebrow block text-rice/70">Look for the glowing sign</span>
+              <span className="mt-1 block font-display text-2xl font-extrabold">{RESTAURANT.address.line1}</span>
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-rice px-4 py-2 text-sm font-semibold text-ink">
+              <PinIcon width={16} height={16} /> Directions
+            </span>
+          </span>
+        </a>
       </section>
 
       {/* FAQ teaser */}

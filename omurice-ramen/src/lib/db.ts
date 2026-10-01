@@ -126,7 +126,7 @@ function seed(db: Database) {
           JSON.stringify(it.tags ?? []),
           JSON.stringify(it.optionGroups ?? []),
           it.popular ? 1 : 0,
-          it.verified ? 1 : 0,
+          1, // transcribed from the printed menu
           ii,
         );
       });
